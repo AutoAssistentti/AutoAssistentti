@@ -7,387 +7,61 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Outfit', sans-serif;
-  background: #f7f7f5;
-  color: #111;
-}
-
-/* Nav */
-nav {
-  background: #fff;
-  border-bottom: 1px solid #e8e8e4;
-  padding: 16px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.logo {
-  font-family: 'Fraunces', serif;
-  font-size: 20px;
-  font-weight: 700;
-  color: #111;
-}
-
+body { font-family: 'Outfit', sans-serif; background: #f7f7f5; color: #111; }
+nav { background: #fff; border-bottom: 1px solid #e8e8e4; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
+.logo { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: #111; }
 .logo em { font-style: italic; color: #aaa; }
-
-.nav-cta {
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 9px;
-  padding: 9px 18px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s;
-  text-decoration: none;
-}
-
+.nav-cta { background: #111; color: #fff; border: none; border-radius: 9px; padding: 9px 18px; font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: background 0.15s; text-decoration: none; }
 .nav-cta:hover { background: #333; }
-
-/* Hero */
-.hero {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 80px 32px 60px;
-  text-align: center;
-}
-
-.hero-tag {
-  display: inline-block;
-  background: #fff;
-  border: 1px solid #e8e8e4;
-  border-radius: 100px;
-  padding: 5px 14px;
-  font-size: 11px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #888;
-  margin-bottom: 24px;
-}
-
-.hero h1 {
-  font-family: 'Fraunces', serif;
-  font-size: clamp(36px, 6vw, 64px);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: -0.03em;
-  margin-bottom: 20px;
-}
-
+.hero { max-width: 800px; margin: 0 auto; padding: 80px 32px 60px; text-align: center; }
+.hero-tag { display: inline-block; background: #fff; border: 1px solid #e8e8e4; border-radius: 100px; padding: 5px 14px; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: #888; margin-bottom: 24px; }
+.hero h1 { font-family: 'Fraunces', serif; font-size: clamp(36px, 6vw, 64px); font-weight: 700; line-height: 1.05; letter-spacing: -0.03em; margin-bottom: 20px; }
 .hero h1 em { font-style: italic; color: #aaa; }
-
-.hero p {
-  font-size: 17px;
-  color: #666;
-  line-height: 1.6;
-  max-width: 500px;
-  margin: 0 auto 36px;
-}
-
-.hero-btns {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn-primary {
-  background: #111;
-  color: #fff;
-  border: none;
-  border-radius: 11px;
-  padding: 14px 28px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: none;
-  transition: background 0.15s, transform 0.15s;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
-}
-
+.hero p { font-size: 17px; color: #666; line-height: 1.6; max-width: 500px; margin: 0 auto 36px; }
+.hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn-primary { background: #111; color: #fff; border: none; border-radius: 11px; padding: 14px 28px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; transition: background 0.15s, transform 0.15s; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
 .btn-primary:hover { background: #333; transform: translateY(-1px); }
-
-.btn-secondary {
-  background: #fff;
-  color: #111;
-  border: 1px solid #e8e8e4;
-  border-radius: 11px;
-  padding: 14px 28px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  text-decoration: none;
-  transition: all 0.15s;
-}
-
+.btn-secondary { background: #fff; color: #111; border: 1px solid #e8e8e4; border-radius: 11px; padding: 14px 28px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; transition: all 0.15s; }
 .btn-secondary:hover { border-color: #bbb; }
-
-/* Stats */
-.stats {
-  display: flex;
-  justify-content: center;
-  gap: 48px;
-  padding: 32px;
-  border-top: 1px solid #e8e8e4;
-  border-bottom: 1px solid #e8e8e4;
-  background: #fff;
-  flex-wrap: wrap;
-}
-
+.stats { display: flex; justify-content: center; gap: 48px; padding: 32px; border-top: 1px solid #e8e8e4; border-bottom: 1px solid #e8e8e4; background: #fff; flex-wrap: wrap; }
 .stat-item { text-align: center; }
-
-.stat-number {
-  font-family: 'Fraunces', serif;
-  font-size: 28px;
-  font-weight: 700;
-  color: #111;
-  margin-bottom: 2px;
-}
-
-.stat-label {
-  font-size: 12px;
-  color: #aaa;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-/* Tools grid */
-.tools-section {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 64px 32px;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.section-tag {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #aaa;
-  margin-bottom: 8px;
-}
-
-.section-title {
-  font-family: 'Fraunces', serif;
-  font-size: 32px;
-  font-weight: 700;
-  color: #111;
-}
-
-.tools-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-}
-
-@media (max-width: 600px) {
-  .tools-grid { grid-template-columns: 1fr; }
-  .hero { padding: 48px 20px 40px; }
-  .stats { gap: 24px; }
-}
-
-.tool-card {
-  background: #fff;
-  border: 1px solid #e8e8e4;
-  border-radius: 16px;
-  padding: 28px;
-  text-decoration: none;
-  color: inherit;
-  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
-  display: block;
-}
-
-.tool-card:hover {
-  border-color: #bbb;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.06);
-}
-
-.tool-icon {
-  font-size: 32px;
-  margin-bottom: 14px;
-}
-
-.tool-name {
-  font-family: 'Fraunces', serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111;
-  margin-bottom: 6px;
-}
-
-.tool-desc {
-  font-size: 13px;
-  color: #888;
-  line-height: 1.5;
-  margin-bottom: 16px;
-}
-
-.tool-link {
-  font-size: 12px;
-  font-weight: 600;
-  color: #111;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* Pricing */
-.pricing-section {
-  background: #111;
-  padding: 64px 32px;
-  text-align: center;
-}
-
-.pricing-title {
-  font-family: 'Fraunces', serif;
-  font-size: 32px;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 8px;
-}
-
-.pricing-sub {
-  font-size: 15px;
-  color: rgba(255,255,255,0.4);
-  margin-bottom: 40px;
-}
-
-.pricing-grid {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.price-card {
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 16px;
-  padding: 28px 24px;
-  flex: 1;
-  min-width: 200px;
-  max-width: 240px;
-  text-align: left;
-}
-
-.price-card.featured {
-  background: #fff;
-  border-color: #fff;
-}
-
-.price-name {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: rgba(255,255,255,0.4);
-  margin-bottom: 12px;
-}
-
-.price-card.featured .price-name { color: #aaa; }
-
-.price-amount {
-  font-family: 'Fraunces', serif;
-  font-size: 36px;
-  font-weight: 700;
-  color: #fff;
-  line-height: 1;
-  margin-bottom: 4px;
-}
-
-.price-card.featured .price-amount { color: #111; }
-
-.price-period {
-  font-size: 12px;
-  color: rgba(255,255,255,0.3);
-  margin-bottom: 20px;
-}
-
-.price-card.featured .price-period { color: #aaa; }
-
-.price-features {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.price-features li {
-  font-size: 12px;
-  color: rgba(255,255,255,0.6);
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.price-card.featured .price-features li { color: #555; }
-
-.price-features li::before {
-  content: '✓';
-  color: rgba(255,255,255,0.4);
-  font-weight: 700;
-  flex-shrink: 0;
-}
-
-.price-card.featured .price-features li::before { color: #111; }
-
-/* CTA section */
-.cta-section {
-  padding: 80px 32px;
-  text-align: center;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.cta-title {
-  font-family: 'Fraunces', serif;
-  font-size: 36px;
-  font-weight: 700;
-  color: #111;
-  margin-bottom: 12px;
-  line-height: 1.1;
-}
-
+.stat-number { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; color: #111; margin-bottom: 2px; }
+.stat-label { font-size: 12px; color: #aaa; text-transform: uppercase; letter-spacing: 0.08em; }
+.tools-section { max-width: 1000px; margin: 0 auto; padding: 64px 32px; }
+.section-header { text-align: center; margin-bottom: 40px; }
+.section-tag { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin-bottom: 8px; }
+.section-title { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: #111; }
+.tools-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+@media (max-width: 600px) { .tools-grid { grid-template-columns: 1fr; } .hero { padding: 48px 20px 40px; } .stats { gap: 24px; } }
+.tool-card { background: #fff; border: 1px solid #e8e8e4; border-radius: 16px; padding: 28px; text-decoration: none; color: inherit; transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s; display: block; }
+.tool-card:hover { border-color: #bbb; transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,0.06); }
+.tool-icon { font-size: 32px; margin-bottom: 14px; }
+.tool-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: #111; margin-bottom: 6px; }
+.tool-desc { font-size: 13px; color: #888; line-height: 1.5; margin-bottom: 16px; }
+.tool-link { font-size: 12px; font-weight: 600; color: #111; display: flex; align-items: center; gap: 4px; }
+.pricing-section { background: #111; padding: 64px 32px; text-align: center; }
+.pricing-title { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+.pricing-sub { font-size: 15px; color: rgba(255,255,255,0.4); margin-bottom: 40px; }
+.pricing-grid { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; max-width: 800px; margin: 0 auto; }
+.price-card { background: #fff; border: 1px solid #fff; border-radius: 16px; padding: 36px 40px; text-align: left; max-width: 340px; width: 100%; }
+.price-name { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin-bottom: 12px; }
+.price-amount { font-family: 'Fraunces', serif; font-size: 48px; font-weight: 700; color: #111; line-height: 1; margin-bottom: 4px; }
+.price-period { font-size: 12px; color: #aaa; margin-bottom: 24px; }
+.price-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.price-features li { font-size: 13px; color: #555; display: flex; align-items: center; gap: 8px; }
+.price-features li::before { content: '✓'; color: #111; font-weight: 700; flex-shrink: 0; }
+.price-btn { display: block; background: #111; color: #fff; text-decoration: none; border-radius: 10px; padding: 13px 20px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; text-align: center; transition: background 0.15s; }
+.price-btn:hover { background: #333; }
+.cta-section { padding: 80px 32px; text-align: center; max-width: 600px; margin: 0 auto; }
+.cta-title { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 700; color: #111; margin-bottom: 12px; line-height: 1.1; }
 .cta-title em { font-style: italic; color: #aaa; }
-
-.cta-sub {
-  font-size: 15px;
-  color: #888;
-  margin-bottom: 28px;
-}
-
-/* Footer */
-footer {
-  border-top: 1px solid #e8e8e4;
-  padding: 20px 32px;
-  text-align: center;
-  font-size: 12px;
-  color: #bbb;
-}
+.cta-sub { font-size: 15px; color: #888; margin-bottom: 28px; }
+footer { border-top: 1px solid #e8e8e4; padding: 20px 32px; text-align: center; font-size: 12px; color: #bbb; }
 </style>
 </head>
-<body>
-
-<nav>
+<body><nav>
   <div class="logo">Auto<em>assistentti</em></div>
-  <a href="mailto:sinunsahkoposti@email.com" class="nav-cta">Ota yhteyttä</a>
+  <a href="mailto:autoassistentti@gmail.com" class="nav-cta">Ota yhteyttä</a>
 </nav>
 
 <div class="hero">
@@ -414,7 +88,7 @@ footer {
     <div class="stat-label">Ilmoitus valmis</div>
   </div>
   <div class="stat-item">
-    <div class="stat-number">€499</div>
+    <div class="stat-number">€299</div>
     <div class="stat-label">Per kuukausi</div>
   </div>
 </div>
@@ -424,87 +98,60 @@ footer {
     <div class="section-tag">Työkalut</div>
     <div class="section-title">Kaikki mitä tarvitset</div>
   </div>
-
   <div class="tools-grid">
-
     <a href="/chatbot.html" class="tool-card">
       <div class="tool-icon">💬</div>
       <div class="tool-name">AI-asiakaspalvelu</div>
       <div class="tool-desc">Chatbot vastaa asiakkaiden kysymyksiin 24/7 — autoista, rahoituksesta, aukioloajoista. Ei enää puheluja pieniin kysymyksiin.</div>
       <div class="tool-link">Kokeile chatbottia →</div>
     </a>
-
     <a href="/rahoituslaskin.html" class="tool-card">
       <div class="tool-icon">💰</div>
       <div class="tool-name">Rahoituslaskin</div>
       <div class="tool-desc">Asiakas laskee kuukausierän suoraan sivustollasi. Automaattisesti jokaisen autoilmoituksen alle.</div>
       <div class="tool-link">Kokeile laskinta →</div>
     </a>
-
     <a href="/varaa-koeajo.html" class="tool-card">
       <div class="tool-icon">📅</div>
       <div class="tool-name">Koeajovaraukset</div>
       <div class="tool-desc">Asiakkaat varaavat koeajoja itse verkossa. Saat ilmoituksen automaattisesti — ei enää soittelua edestakaisin.</div>
       <div class="tool-link">Kokeile varausta →</div>
     </a>
-
     <a href="/ilmoitusgeneraattori.html" class="tool-card">
       <div class="tool-icon">✨</div>
       <div class="tool-name">Ilmoitusgeneraattori</div>
       <div class="tool-desc">Syötä auton perustiedot, tekoäly kirjoittaa täyden ilmoituksen Nettiauto.comiin, Facebookiin ja Instagramiin sekunneissa.</div>
       <div class="tool-link">Kokeile generaattoria →</div>
     </a>
-
   </div>
 </div>
 
 <div class="pricing-section">
   <div class="pricing-title">Selkeä hinnoittelu</div>
   <div class="pricing-sub">Ei sitoutumisaikaa. Ensimmäinen viikko ilmaiseksi.</div>
-
   <div class="pricing-grid">
-
     <div class="price-card">
-      <div class="price-name">Starter</div>
+      <div class="price-name">Kaikki sisältyy ⭐</div>
       <div class="price-amount">€299</div>
       <div class="price-period">per kuukausi</div>
       <ul class="price-features">
-        <li>AI-chatbot</li>
+        <li>AI-chatbot 24/7</li>
         <li>Rahoituslaskin</li>
         <li>Koeajovaraukset</li>
-      </ul>
-    </div>
-
-    <div class="price-card featured">
-      <div class="price-name">Professional ⭐</div>
-      <div class="price-amount">€499</div>
-      <div class="price-period">per kuukausi</div>
-      <ul class="price-features">
-        <li>Kaikki Starter-ominaisuudet</li>
         <li>Ilmoitusgeneraattori</li>
         <li>Some-sisällöt</li>
         <li>Kuukausiraportti</li>
-      </ul>
-    </div>
-
-    <div class="price-card">
-      <div class="price-name">Premium</div>
-      <div class="price-amount">€699</div>
-      <div class="price-period">per kuukausi</div>
-      <ul class="price-features">
-        <li>Kaikki Pro-ominaisuudet</li>
         <li>Prioriteettituki</li>
-        <li>Mukautetut integraatiot</li>
       </ul>
+      <a href="mailto:autoassistentti@gmail.com" class="price-btn">Aloita ilmainen viikko →</a>
     </div>
-
   </div>
 </div>
 
 <div class="cta-section">
   <div class="cta-title">Valmis <em>kokeilemaan?</em></div>
   <div class="cta-sub">Ensimmäinen viikko ilmaiseksi. Ei korttia tarvita.</div>
-  <a href="mailto:sinunsahkoposti@email.com" class="btn-primary">Ota yhteyttä →</a>
+  <a href="mailto:autoassistentti@gmail.com" class="btn-primary">Ota yhteyttä →</a>
 </div>
 
 <footer>
