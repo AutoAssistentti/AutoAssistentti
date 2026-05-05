@@ -6,402 +6,81 @@
 <title>Ilmoitusgeneraattori</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: 'Outfit', sans-serif;
-  background: #f7f7f5;
-  min-height: 100vh;
-  padding: 32px 20px;
-}
-
-.page {
-  max-width: 860px;
-  margin: 0 auto;
-}
-
-/* ── Page header ── */
-.page-header {
-  margin-bottom: 28px;
-  animation: rise 0.5s ease both;
-}
-
-.page-tag {
-  font-size: 11px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #aaa;
-  margin-bottom: 6px;
-}
-
-.page-title {
-  font-family: 'Fraunces', serif;
-  font-size: 32px;
-  font-weight: 700;
-  color: #111;
-  line-height: 1.1;
-}
-
+body { font-family: 'Outfit', sans-serif; background: #f7f7f5; min-height: 100vh; padding: 32px 20px; }
+.page { max-width: 860px; margin: 0 auto; }
+.page-header { margin-bottom: 28px; animation: rise 0.5s ease both; }
+.page-tag { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin-bottom: 6px; }
+.page-title { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: #111; line-height: 1.1; }
 .page-title em { font-style: italic; color: #aaa; }
-
-@keyframes rise {
-  from { opacity:0; transform:translateY(12px); }
-  to   { opacity:1; transform:translateY(0); }
-}
-
-/* ── Layout ── */
-.layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: start;
-}
-
-@media (max-width: 680px) {
-  .layout { grid-template-columns: 1fr; }
-}
-
-/* ── Card base ── */
-.card {
-  background: #fff;
-  border: 1px solid #e8e8e4;
-  border-radius: 16px;
-  overflow: hidden;
-  animation: rise 0.5s ease both;
-}
-
-.card-header {
-  padding: 18px 22px 14px;
-  border-bottom: 1px solid #f0f0ec;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.card-title {
-  font-family: 'Fraunces', serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: #111;
-}
-
-.card-badge {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  background: #f0f0ec;
-  color: #888;
-  padding: 3px 8px;
-  border-radius: 100px;
-}
-
+@keyframes rise { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+.layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+@media (max-width: 680px) { .layout { grid-template-columns: 1fr; } }
+.card { background: #fff; border: 1px solid #e8e8e4; border-radius: 16px; overflow: hidden; animation: rise 0.5s ease both; }
+.card-header { padding: 18px 22px 14px; border-bottom: 1px solid #f0f0ec; display: flex; align-items: center; justify-content: space-between; }
+.card-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: #111; }
+.card-badge { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; background: #f0f0ec; color: #888; padding: 3px 8px; border-radius: 100px; }
 .card-body { padding: 20px 22px; }
-
-/* ── Form fields ── */
 .field { margin-bottom: 14px; }
 .field:last-child { margin-bottom: 0; }
-
-.field label {
-  display: block;
-  font-size: 11px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.09em;
-  color: #aaa;
-  margin-bottom: 5px;
-}
-
-.field input,
-.field select,
-.field textarea {
-  width: 100%;
-  background: #f7f7f5;
-  border: 1px solid #e8e8e4;
-  border-radius: 9px;
-  padding: 9px 12px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 13px;
-  color: #222;
-  outline: none;
-  transition: border-color 0.15s, background 0.15s;
-  appearance: none;
-}
-
-.field input:focus,
-.field select:focus,
-.field textarea:focus {
-  border-color: #999;
-  background: #fff;
-}
-
+.field label { display: block; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; color: #aaa; margin-bottom: 5px; }
+.field input, .field select, .field textarea { width: 100%; background: #f7f7f5; border: 1px solid #e8e8e4; border-radius: 9px; padding: 9px 12px; font-family: 'Outfit', sans-serif; font-size: 13px; color: #222; outline: none; transition: border-color 0.15s, background 0.15s; appearance: none; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: #999; background: #fff; }
 .field textarea { resize: none; height: 72px; line-height: 1.5; }
-
-.field-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-/* Extras checkboxes */
-.extras-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-
-.extra-item {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 7px 10px;
-  background: #f7f7f5;
-  border: 1px solid #e8e8e4;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.15s;
-  font-size: 12px;
-  color: #444;
-  user-select: none;
-}
-
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.extras-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.extra-item { display: flex; align-items: center; gap: 7px; padding: 7px 10px; background: #f7f7f5; border: 1px solid #e8e8e4; border-radius: 8px; cursor: pointer; transition: all 0.15s; font-size: 12px; color: #444; user-select: none; }
 .extra-item:hover { border-color: #ccc; background: #f0f0ec; }
-
-.extra-item input[type="checkbox"] {
-  width: 14px; height: 14px;
-  accent-color: #111;
-  cursor: pointer;
-  flex-shrink: 0;
-  background: none;
-  border: none;
-  padding: 0;
-}
-
-.extra-item.checked {
-  background: #111;
-  border-color: #111;
-  color: #fff;
-}
-
-/* ── Generate button ── */
-.generate-btn {
-  width: 100%;
-  background: #111;
-  border: none;
-  border-radius: 11px;
-  padding: 13px 20px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
-  cursor: pointer;
-  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 16px;
-}
-
-.generate-btn:hover {
-  background: #222;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 18px rgba(0,0,0,0.14);
-}
-
+.extra-item input[type="checkbox"] { width: 14px; height: 14px; accent-color: #111; cursor: pointer; flex-shrink: 0; background: none; border: none; padding: 0; }
+.extra-item.checked { background: #111; border-color: #111; color: #fff; }
+.generate-btn { width: 100%; background: #111; border: none; border-radius: 11px; padding: 13px 20px; font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; color: #fff; cursor: pointer; transition: background 0.15s, transform 0.15s, box-shadow 0.15s; box-shadow: 0 2px 12px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; }
+.generate-btn:hover { background: #222; transform: translateY(-1px); box-shadow: 0 4px 18px rgba(0,0,0,0.14); }
 .generate-btn:active { transform: translateY(0); }
 .generate-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
-.btn-icon { font-size: 16px; }
-
-/* Spinner */
-.spinner {
-  width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: #fff;
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  display: none;
-}
-
+.spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; display: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── Output card ── */
-.output-card {
-  grid-column: 1 / -1;
-  display: none;
-  animation: rise 0.4s ease both;
-}
-
+.output-card { grid-column: 1 / -1; display: none; animation: rise 0.4s ease both; }
 .output-card.visible { display: block; }
-
-.output-header {
-  padding: 18px 22px;
-  border-bottom: 1px solid #f0f0ec;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: gap;
-  gap: 10px;
-}
-
-.output-title {
-  font-family: 'Fraunces', serif;
-  font-size: 16px;
-  font-weight: 700;
-  color: #111;
-}
-
-.output-actions {
-  display: flex;
-  gap: 8px;
-}
-
-.action-btn {
-  background: #f7f7f5;
-  border: 1px solid #e8e8e4;
-  border-radius: 8px;
-  padding: 6px 12px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 12px;
-  font-weight: 500;
-  color: #555;
-  cursor: pointer;
-  transition: all 0.15s;
-  display: flex;
-  align-items: center;
-  gap: 5px;
-}
-
+.output-header { padding: 18px 22px; border-bottom: 1px solid #f0f0ec; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+.output-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: #111; }
+.output-actions { display: flex; gap: 8px; }
+.action-btn { background: #f7f7f5; border: 1px solid #e8e8e4; border-radius: 8px; padding: 6px 12px; font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 500; color: #555; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 5px; }
 .action-btn:hover { background: #111; color: #fff; border-color: #111; }
-
-/* Tabs */
-.output-tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid #f0f0ec;
-  padding: 0 22px;
-}
-
-.tab {
-  padding: 11px 14px;
-  font-size: 12px;
-  font-weight: 500;
-  color: #aaa;
-  cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: color 0.15s, border-color 0.15s;
-  margin-bottom: -1px;
-  white-space: nowrap;
-}
-
+.output-tabs { display: flex; border-bottom: 1px solid #f0f0ec; padding: 0 22px; }
+.tab { padding: 11px 14px; font-size: 12px; font-weight: 500; color: #aaa; cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; margin-bottom: -1px; white-space: nowrap; }
 .tab.active { color: #111; border-bottom-color: #111; }
 .tab:hover:not(.active) { color: #555; }
-
-/* Output content */
 .output-pane { display: none; padding: 22px; }
 .output-pane.active { display: block; }
-
-.output-text {
-  font-size: 14px;
-  color: #333;
-  line-height: 1.75;
-  white-space: pre-wrap;
-  word-break: break-word;
-}
-
-/* Skeleton loader */
-.skeleton {
-  padding: 22px;
-}
-
-.skel-line {
-  height: 14px;
-  background: linear-gradient(90deg, #f0f0ec 25%, #e8e8e4 50%, #f0f0ec 75%);
-  background-size: 200% 100%;
-  border-radius: 6px;
-  margin-bottom: 10px;
-  animation: shimmer 1.4s ease infinite;
-}
-
-@keyframes shimmer {
-  from { background-position: 200% 0; }
-  to   { background-position: -200% 0; }
-}
-
-.skel-line.w-full  { width: 100%; }
-.skel-line.w-80    { width: 80%; }
-.skel-line.w-90    { width: 90%; }
-.skel-line.w-60    { width: 60%; }
-.skel-line.w-75    { width: 75%; }
-
-/* API key notice */
-.api-notice {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  border-radius: 10px;
-  padding: 10px 14px;
-  font-size: 12px;
-  color: #92400e;
-  margin-bottom: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
+.output-text { font-size: 14px; color: #333; line-height: 1.75; white-space: pre-wrap; word-break: break-word; }
+.skeleton { padding: 22px; }
+.skel-line { height: 14px; background: linear-gradient(90deg, #f0f0ec 25%, #e8e8e4 50%, #f0f0ec 75%); background-size: 200% 100%; border-radius: 6px; margin-bottom: 10px; animation: shimmer 1.4s ease infinite; }
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.skel-line.w-full { width: 100%; } .skel-line.w-80 { width: 80%; } .skel-line.w-90 { width: 90%; } .skel-line.w-60 { width: 60%; } .skel-line.w-75 { width: 75%; }
 </style>
-</head>
-<body>
-
+</head><body>
 <div class="page">
-
   <div class="page-header">
     <div class="page-tag">Autoassistentti — Työkalu</div>
     <div class="page-title">Ilmoitus<em>generaattori</em></div>
   </div>
-
   <div class="layout">
-
-    <!-- ═══ LEFT: Car details ═══ -->
     <div class="card" style="animation-delay:0.05s">
       <div class="card-header">
         <div class="card-title">Auton tiedot</div>
         <div class="card-badge">Vaadittu</div>
       </div>
       <div class="card-body">
-
-        <div class="api-notice" id="apiNotice">
-          ⚡ Demo-tila — lisää API-avain käyttääksesi oikeaa tekoälyä
-        </div>
-
         <div class="field-row">
-          <div class="field">
-            <label>Merkki</label>
-            <input type="text" id="make" placeholder="Toyota">
-          </div>
-          <div class="field">
-            <label>Malli</label>
-            <input type="text" id="model" placeholder="Corolla">
-          </div>
+          <div class="field"><label>Merkki</label><input type="text" id="make" placeholder="Toyota"></div>
+          <div class="field"><label>Malli</label><input type="text" id="model" placeholder="Corolla"></div>
         </div>
-
         <div class="field-row">
-          <div class="field">
-            <label>Vuosimalli</label>
-            <input type="number" id="year" placeholder="2021" min="1990" max="2026">
-          </div>
-          <div class="field">
-            <label>Kilometrit</label>
-            <input type="text" id="km" placeholder="67 000">
-          </div>
+          <div class="field"><label>Vuosimalli</label><input type="number" id="year" placeholder="2021" min="1990" max="2030"></div>
+          <div class="field"><label>Kilometrit</label><input type="text" id="km" placeholder="67 000"></div>
         </div>
-
         <div class="field-row">
-          <div class="field">
-            <label>Polttoaine</label>
+          <div class="field"><label>Polttoaine</label>
             <select id="fuel">
               <option value="bensiini">Bensiini</option>
               <option value="diesel">Diesel</option>
@@ -410,44 +89,27 @@ body {
               <option value="sähkö">Sähkö</option>
             </select>
           </div>
-          <div class="field">
-            <label>Vaihteisto</label>
+          <div class="field"><label>Vaihteisto</label>
             <select id="gearbox">
               <option value="automaatti">Automaatti</option>
               <option value="manuaali">Manuaali</option>
             </select>
           </div>
         </div>
-
         <div class="field-row">
-          <div class="field">
-            <label>Teho (hv)</label>
-            <input type="text" id="power" placeholder="122">
-          </div>
-          <div class="field">
-            <label>Väri</label>
-            <input type="text" id="color" placeholder="Valkoinen">
-          </div>
+          <div class="field"><label>Teho (hv)</label><input type="text" id="power" placeholder="122"></div>
+          <div class="field"><label>Väri</label><input type="text" id="color" placeholder="Valkoinen"></div>
         </div>
-
-        <div class="field">
-          <label>Hinta (€)</label>
-          <input type="text" id="price" placeholder="18 900">
-        </div>
-
+        <div class="field"><label>Hinta (€)</label><input type="text" id="price" placeholder="18 900"></div>
       </div>
     </div>
-
-    <!-- ═══ RIGHT: Extras + options ═══ -->
     <div class="card" style="animation-delay:0.1s">
       <div class="card-header">
         <div class="card-title">Varusteet & lisätiedot</div>
         <div class="card-badge">Valinnainen</div>
       </div>
       <div class="card-body">
-
-        <div class="field">
-          <label>Korimalli</label>
+        <div class="field"><label>Korimalli</label>
           <select id="body">
             <option value="sedan">Sedan</option>
             <option value="farmari">Farmari</option>
@@ -458,42 +120,26 @@ body {
             <option value="coupe">Coupé</option>
           </select>
         </div>
-
-        <div class="field">
-          <label>Varusteet (valitse kaikki sopivat)</label>
-          <div class="extras-grid" id="extrasGrid">
-          </div>
+        <div class="field"><label>Varusteet (valitse kaikki sopivat)</label>
+          <div class="extras-grid" id="extrasGrid"></div>
         </div>
-
-        <div class="field">
-          <label>Muuta huomioitavaa</label>
+        <div class="field"><label>Muuta huomioitavaa</label>
           <textarea id="notes" placeholder="Esim. täysi huoltokirja, uudet renkaat, savuton auto..."></textarea>
         </div>
-
-        <div class="field">
-          <label>Tyyli</label>
+        <div class="field"><label>Tyyli</label>
           <select id="style">
             <option value="ammattimainen">Ammattimainen & asiallinen</option>
             <option value="innostava">Innostava & myyvä</option>
             <option value="lyhyt">Lyhyt & ytimekäs</option>
           </select>
         </div>
-
-        <div class="field">
-          <label>API-avain (Claude)</label>
-          <input type="password" id="apiKey" placeholder="sk-ant-api03-...">
-        </div>
-
         <button class="generate-btn" id="generateBtn" onclick="generate()">
           <div class="spinner" id="spinner"></div>
           <span class="btn-icon" id="btnIcon">✨</span>
           <span id="btnText">Luo ilmoitus</span>
         </button>
-
       </div>
     </div>
-
-    <!-- ═══ OUTPUT ═══ -->
     <div class="card output-card" id="outputCard">
       <div class="output-header">
         <div class="output-title">Valmis ilmoitus</div>
@@ -502,46 +148,24 @@ body {
           <button class="action-btn" onclick="generate()">🔄 Luo uudelleen</button>
         </div>
       </div>
-
       <div class="output-tabs">
-        <div class="tab active" onclick="switchTab('nettiauto')">Nettiauto.com</div>
-        <div class="tab" onclick="switchTab('facebook')">Facebook</div>
-        <div class="tab" onclick="switchTab('instagram')">Instagram</div>
-        <div class="tab" onclick="switchTab('website')">Nettisivu</div>
+        <div class="tab active" onclick="switchTab('nettiauto', event)">Nettiauto.com</div>
+        <div class="tab" onclick="switchTab('facebook', event)">Facebook</div>
+        <div class="tab" onclick="switchTab('instagram', event)">Instagram</div>
+        <div class="tab" onclick="switchTab('website', event)">Nettisivu</div>
       </div>
-
       <div id="skeletonLoader" class="skeleton" style="display:none;">
-        <div class="skel-line w-60"></div>
-        <div class="skel-line w-full"></div>
-        <div class="skel-line w-90"></div>
-        <div class="skel-line w-full"></div>
-        <div class="skel-line w-80"></div>
-        <div class="skel-line w-full"></div>
-        <div class="skel-line w-75"></div>
-        <div class="skel-line w-60"></div>
+        <div class="skel-line w-60"></div><div class="skel-line w-full"></div>
+        <div class="skel-line w-90"></div><div class="skel-line w-full"></div>
+        <div class="skel-line w-80"></div><div class="skel-line w-75"></div>
       </div>
-
-      <div class="output-pane active" id="pane-nettiauto">
-        <div class="output-text" id="text-nettiauto"></div>
-      </div>
-      <div class="output-pane" id="pane-facebook">
-        <div class="output-text" id="text-facebook"></div>
-      </div>
-      <div class="output-pane" id="pane-instagram">
-        <div class="output-text" id="text-instagram"></div>
-      </div>
-      <div class="output-pane" id="pane-website">
-        <div class="output-text" id="text-website"></div>
-      </div>
+      <div class="output-pane active" id="pane-nettiauto"><div class="output-text" id="text-nettiauto"></div></div>
+      <div class="output-pane" id="pane-facebook"><div class="output-text" id="text-facebook"></div></div>
+      <div class="output-pane" id="pane-instagram"><div class="output-text" id="text-instagram"></div></div>
+      <div class="output-pane" id="pane-website"><div class="output-text" id="text-website"></div></div>
     </div>
-
   </div>
-</div>
-
-<script>
-/* ═══════════════════════════════════
-   EXTRAS LIST
-═══════════════════════════════════ */
+</div><script>
 var EXTRAS = [
   'Nahkasisusta','Lämmitettävät istuimet','Panoramaluukku','Vetokoukku',
   'Navigaattori','Takakamera','Kaistavahti','Vakionopeussäädin','Adaptiivinen cruise',
@@ -556,41 +180,26 @@ function buildExtras() {
   EXTRAS.forEach(function(extra) {
     var label = document.createElement('label');
     label.className = 'extra-item';
-    label.innerHTML =
-      '<input type="checkbox" onchange="toggleExtra(this, \'' + extra + '\')">' +
-      extra;
+    label.innerHTML = '<input type="checkbox" onchange="toggleExtra(this, \'' + extra + '\')">' + extra;
     grid.appendChild(label);
   });
 }
 
 function toggleExtra(cb, name) {
   var label = cb.parentElement;
-  if (cb.checked) {
-    checkedExtras[name] = true;
-    label.classList.add('checked');
-  } else {
-    delete checkedExtras[name];
-    label.classList.remove('checked');
-  }
+  if (cb.checked) { checkedExtras[name] = true; label.classList.add('checked'); }
+  else { delete checkedExtras[name]; label.classList.remove('checked'); }
 }
 
-function getCheckedExtras() {
-  return Object.keys(checkedExtras);
-}
+function getCheckedExtras() { return Object.keys(checkedExtras); }
 
-/* ═══════════════════════════════════
-   TABS
-═══════════════════════════════════ */
-function switchTab(name) {
+function switchTab(name, event) {
   document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
   document.querySelectorAll('.output-pane').forEach(function(p) { p.classList.remove('active'); });
   event.target.classList.add('active');
   document.getElementById('pane-' + name).classList.add('active');
 }
 
-/* ═══════════════════════════════════
-   COPY
-═══════════════════════════════════ */
 function copyAll() {
   var activePane = document.querySelector('.output-pane.active .output-text');
   if (!activePane) return;
@@ -601,9 +210,6 @@ function copyAll() {
   });
 }
 
-/* ═══════════════════════════════════
-   BUILD CAR SUMMARY
-═══════════════════════════════════ */
 function buildCarSummary() {
   return {
     make:    document.getElementById('make').value.trim(),
@@ -622,9 +228,6 @@ function buildCarSummary() {
   };
 }
 
-/* ═══════════════════════════════════
-   VALIDATE
-═══════════════════════════════════ */
 function validate(car) {
   if (!car.make || !car.model || !car.year) {
     alert('Täytä ainakin merkki, malli ja vuosimalli.');
@@ -633,250 +236,107 @@ function validate(car) {
   return true;
 }
 
-/* ═══════════════════════════════════
-   GENERATE
-═══════════════════════════════════ */
 function generate() {
   var car = buildCarSummary();
   if (!validate(car)) return;
-
-  var apiKey = document.getElementById('apiKey').value.trim();
-
   setLoading(true);
 
-  if (!apiKey) {
-    // Demo mode
-    setTimeout(function() {
-      var results = buildDemoContent(car);
-      showResults(results);
-      setLoading(false);
-    }, 1400);
-    return;
-  }
-
-  // Real Claude API
-  var prompt = buildPrompt(car);
-
-  fetch('https://api.anthropic.com/v1/messages', {
+  fetch('/api/chat', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true'
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1500,
-      messages: [{
-        role: 'user',
-        content: prompt
-      }]
+      messages: [{ role: 'user', content: buildPrompt(car) }],
+      max_tokens: 1500
     })
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
     setLoading(false);
     if (data.content && data.content[0] && data.content[0].text) {
-      var parsed = parseResponse(data.content[0].text);
-      showResults(parsed);
+      showResults(parseResponse(data.content[0].text));
     } else {
-      alert('API-virhe. Tarkista API-avain.');
+      alert('Virhe: ' + (data.error || 'Tuntematon virhe. Yritä uudelleen.'));
     }
   })
-  .catch(function() {
+  .catch(function(err) {
     setLoading(false);
     alert('Verkkovirhe. Yritä uudelleen.');
+    console.error(err);
   });
 }
 
-/* ═══════════════════════════════════
-   PROMPT
-═══════════════════════════════════ */
 function buildPrompt(car) {
   var extrasStr = car.extras.length ? car.extras.join(', ') : 'ei erityisiä varusteita';
   var styleGuide = {
     'ammattimainen': 'Kirjoita ammattimainen, asiallinen ja luotettava teksti.',
-    'innostava':     'Kirjoita innostava, myyvä ja energinen teksti joka saa ostajan kiinnostumaan.',
-    'lyhyt':         'Kirjoita lyhyt ja ytimekäs teksti, max 3-4 lausetta per osio.'
+    'innostava': 'Kirjoita innostava, myyvä ja energinen teksti joka saa ostajan kiinnostumaan.',
+    'lyhyt': 'Kirjoita lyhyt ja ytimekäs teksti, max 3-4 lausetta per osio.'
   }[car.style] || '';
 
-  return `Olet autoilmoitusten kirjoittaja. Kirjoita neljä eri versiota seuraavalle autolle:
-
-AUTO:
-Merkki & malli: ${car.make} ${car.model}
-Vuosimalli: ${car.year}
-Kilometrit: ${car.km || 'ei ilmoitettu'} km
-Polttoaine: ${car.fuel}
-Vaihteisto: ${car.gearbox}
-Teho: ${car.power ? car.power + ' hv' : 'ei ilmoitettu'}
-Väri: ${car.color || 'ei ilmoitettu'}
-Korimalli: ${car.body}
-Hinta: ${car.price ? car.price + ' €' : 'ei ilmoitettu'}
-Varusteet: ${extrasStr}
-Lisätiedot: ${car.notes || 'ei lisätietoja'}
-
-TYYLI: ${styleGuide}
-
-Kirjoita TARKALLEEN tässä muodossa (pidä otsikot täsmälleen samana):
-
-[NETTIAUTO]
-(Nettiauto.com-ilmoitusteksti, ammattimainen, 3-5 kappaletta, mainitse tärkeimmät varusteet ja ominaisuudet)
-
-[FACEBOOK]
-(Facebook Marketplace -ilmoitus, ystävällinen sävy, 2-3 kappaletta + hintatiedot)
-
-[INSTAGRAM]
-(Instagram-kuvateksti, max 150 sanaa, emojit, 5-8 hashtagia lopussa)
-
-[NETTISIVU]
-(Nettisivun tuotekuvaus, SEO-ystävällinen, 2-3 kappaletta)
-
-Kirjoita kaikki suomeksi.`;
+  return 'Olet autoilmoitusten kirjoittaja. Kirjoita neljä eri versiota seuraavalle autolle:\n\n' +
+    'AUTO:\nMerkki & malli: ' + car.make + ' ' + car.model + '\n' +
+    'Vuosimalli: ' + car.year + '\nKilometrit: ' + (car.km || 'ei ilmoitettu') + ' km\n' +
+    'Polttoaine: ' + car.fuel + '\nVaihteisto: ' + car.gearbox + '\n' +
+    'Teho: ' + (car.power ? car.power + ' hv' : 'ei ilmoitettu') + '\n' +
+    'Väri: ' + (car.color || 'ei ilmoitettu') + '\nKorimalli: ' + car.body + '\n' +
+    'Hinta: ' + (car.price ? car.price + ' €' : 'ei ilmoitettu') + '\n' +
+    'Varusteet: ' + extrasStr + '\nLisätiedot: ' + (car.notes || 'ei lisätietoja') + '\n\n' +
+    'TYYLI: ' + styleGuide + '\n\n' +
+    'Kirjoita TARKALLEEN tässä muodossa:\n\n' +
+    '[NETTIAUTO]\n(Nettiauto.com-ilmoitusteksti, 3-5 kappaletta)\n\n' +
+    '[FACEBOOK]\n(Facebook Marketplace, 2-3 kappaletta + hintatiedot)\n\n' +
+    '[INSTAGRAM]\n(Instagram-kuvateksti, max 150 sanaa, emojit, hashtagit)\n\n' +
+    '[NETTISIVU]\n(Nettisivun tuotekuvaus, SEO-ystävällinen)\n\n' +
+    'Kirjoita kaikki suomeksi.';
 }
 
-/* ═══════════════════════════════════
-   PARSE RESPONSE
-═══════════════════════════════════ */
 function parseResponse(text) {
-  var sections = { nettiauto: '', facebook: '', instagram: '', website: '' };
-  var parts = {
-    nettiauto: text.match(/\[NETTIAUTO\]([\s\S]*?)(?=\[FACEBOOK\]|$)/),
-    facebook:  text.match(/\[FACEBOOK\]([\s\S]*?)(?=\[INSTAGRAM\]|$)/),
-    instagram: text.match(/\[INSTAGRAM\]([\s\S]*?)(?=\[NETTISIVU\]|$)/),
-    website:   text.match(/\[NETTISIVU\]([\s\S]*?)$/)
-  };
-
-  Object.keys(parts).forEach(function(key) {
-    var sectionKey = key === 'website' ? 'website' : key;
-    sections[sectionKey] = parts[key] ? parts[key][1].trim() : text;
-  });
-
-  return sections;
-}
-
-/* ═══════════════════════════════════
-   DEMO CONTENT
-═══════════════════════════════════ */
-function buildDemoContent(car) {
-  var name  = (car.make || 'Toyota') + ' ' + (car.model || 'Corolla');
-  var year  = car.year  || '2021';
-  var km    = car.km    || '67 000';
-  var fuel  = car.fuel  || 'bensiini';
-  var gear  = car.gearbox || 'automaatti';
-  var price = car.price ? car.price + ' €' : '18 900 €';
-  var color = car.color || 'valkoinen';
-  var extras = car.extras.length
-    ? car.extras.slice(0,4).join(', ')
-    : 'navigaattori, lämmitettävät istuimet';
-
+  var nettiauto = text.match(/\[NETTIAUTO\]([\s\S]*?)(?=\[FACEBOOK\]|$)/);
+  var facebook  = text.match(/\[FACEBOOK\]([\s\S]*?)(?=\[INSTAGRAM\]|$)/);
+  var instagram = text.match(/\[INSTAGRAM\]([\s\S]*?)(?=\[NETTISIVU\]|$)/);
+  var website   = text.match(/\[NETTISIVU\]([\s\S]*?)$/);
   return {
-    nettiauto:
-`Myydään ${year} ${name} — Erinomainen kunto, huoltokirja täynnä
-
-Tässä on etsimäsi luotettava ${name}, vuosimallia ${year}. Auto on ajettu ${km} km ja se on pidetty erinomaisessa kunnossa. Täydellinen arkipäivän kulkupeli tai perheen monipurposeauto.
-
-Polttoainejärjestelmänä ${fuel} ja vaihteistona ${gear} — ajaminen on sujuvaa ja vaivatonta. Väri ${color} pitää auton näyttävän ulkonäön vuodesta toiseen.
-
-Varusteina mm. ${extras}. Auto on savuton ja lemmikkivapainen.
-
-Hinta: ${price}. Rahoitus järjestyy — kysy tarjous!
-
-Lisätiedot ja koeajosopimukset: ota rohkeasti yhteyttä.`,
-
-    facebook:
-`🚗 Myydään ${year} ${name} — ${price}
-
-Loistava ${name} lähdössä uuteen kotiin! Vuosimalli ${year}, ajettu ${km} km, ${fuel}/${gear}. Auto on huollettu säännöllisesti ja se on erinomaisessa kunnossa.
-
-Varusteet: ${extras}. Väri ${color}.
-
-📞 Soita tai lähetä viesti — koeajo sopimuksen mukaan!
-💰 Hinta: ${price} (rahoitus mahdollinen)`,
-
-    instagram:
-`✨ ${year} ${name} — nyt myynnissä!
-
-${color} ${name} vuosimallia ${year} etsii uutta omistajaa 🚗 Ajettu ${km} km, ${fuel}, ${gear}. Varustuksessa mm. ${extras}.
-
-Hinta vain ${price} 💸 Rahoitus järjestyy!
-
-👉 Linkki profiilissa tai DM meille!
-
-#autokauppa #${(car.make||'toyota').toLowerCase()} #${(car.model||'corolla').toLowerCase()} #käytettyauto #autoosto #suomi #autoliike #koeajo #${fuel} #${gear}`,
-
-    website:
-`${year} ${name} — ${price}
-
-Kattavasti varusteltu ${name} (${year}) on nyt saatavilla kilpailukykyiseen hintaan. Tämä ${color} ${fuel}-${gear}-auto on ajettu ${km} km ja se on huollettu asianmukaisesti koko käyttöikänsä ajan.
-
-Auton varustelu sisältää: ${extras}. Auto soveltuu erinomaisesti niin arkikäyttöön kuin pidempiinkin matkoihin.
-
-Tule tutustumaan ja koeajamaan — varaa aika helposti verkosta!`
+    nettiauto: nettiauto ? nettiauto[1].trim() : text,
+    facebook:  facebook  ? facebook[1].trim()  : text,
+    instagram: instagram ? instagram[1].trim()  : text,
+    website:   website   ? website[1].trim()    : text
   };
 }
 
-/* ═══════════════════════════════════
-   SHOW RESULTS
-═══════════════════════════════════ */
 function showResults(results) {
   document.getElementById('text-nettiauto').textContent = results.nettiauto || '';
   document.getElementById('text-facebook').textContent  = results.facebook  || '';
   document.getElementById('text-instagram').textContent = results.instagram || '';
   document.getElementById('text-website').textContent   = results.website   || '';
-
   var card = document.getElementById('outputCard');
   card.classList.add('visible');
-
-  // Reset to first tab
   document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
   document.querySelectorAll('.output-pane').forEach(function(p) { p.classList.remove('active'); });
   document.querySelector('.tab').classList.add('active');
   document.getElementById('pane-nettiauto').classList.add('active');
-
   card.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-/* ═══════════════════════════════════
-   LOADING STATE
-═══════════════════════════════════ */
 function setLoading(on) {
-  var btn     = document.getElementById('generateBtn');
+  var btn = document.getElementById('generateBtn');
   var spinner = document.getElementById('spinner');
-  var icon    = document.getElementById('btnIcon');
-  var text    = document.getElementById('btnText');
-  var skel    = document.getElementById('skeletonLoader');
-  var card    = document.getElementById('outputCard');
-
+  var icon = document.getElementById('btnIcon');
+  var text = document.getElementById('btnText');
+  var skel = document.getElementById('skeletonLoader');
+  var card = document.getElementById('outputCard');
   btn.disabled = on;
-
   if (on) {
-    spinner.style.display = 'block';
-    icon.style.display    = 'none';
-    text.textContent      = 'Generoidaan...';
-    card.classList.add('visible');
-    skel.style.display = 'block';
+    spinner.style.display = 'block'; icon.style.display = 'none';
+    text.textContent = 'Generoidaan...';
+    card.classList.add('visible'); skel.style.display = 'block';
     document.querySelectorAll('.output-pane').forEach(function(p) { p.classList.remove('active'); });
     card.scrollIntoView({ behavior: 'smooth', block: 'start' });
   } else {
-    spinner.style.display = 'none';
-    icon.style.display    = 'inline';
-    text.textContent      = 'Luo ilmoitus';
-    skel.style.display    = 'none';
+    spinner.style.display = 'none'; icon.style.display = 'inline';
+    text.textContent = 'Luo ilmoitus'; skel.style.display = 'none';
   }
 }
 
-/* ═══════════════════════════════════
-   API KEY NOTICE
-═══════════════════════════════════ */
-document.getElementById('apiKey').addEventListener('input', function() {
-  var notice = document.getElementById('apiNotice');
-  notice.style.display = this.value.trim() ? 'none' : 'flex';
-});
-
-/* ═══════════════════════════════════
-   INIT
-═══════════════════════════════════ */
 buildExtras();
 </script>
 </body>
