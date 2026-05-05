@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autoliike Chatbot</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #f7f7f5;
+  min-height: 100vh;
+}
+
+/* ══════════════════════════════
+   BUBBLE BUTTON
+══════════════════════════════ */
+#chat-bubble {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  background: #111;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  z-index: 9999;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes popIn {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+#chat-bubble:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+}
+
+#chat-bubble svg {
+  transition: transform 0.3s ease, opacity 0.2s ease;
+}
+
+#chat-bubble.open .icon-chat { transform: scale(0) rotate(45deg); opacity: 0; position: absolute; }
+#chat-bubble.open .icon-close { transform: scale(1) rotate(0deg); opacity: 1; }
+#chat-bubble:not(.open) .icon-close { transform: scale(0); opacity: 0; position: absolute; }
+
+/* Notification dot */
+#notif {
+  position: absolute;
+  top: 0; right: 0;
+  width: 16px; height: 16px;
+  background: #e53e3e;
+  border-radius: 50%;
+  border: 2px solid #f7f7f5;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: notifPop 0.3s 1.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes notifPop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+/* ══════════════════════════════
+   CHAT WINDOW
+══════════════════════════════ */
+#chat-window {
+  position: fixed;
+  bottom: 92px;
+  right: 24px;
+  width: 360px;
+  max-height: 560px;
+  background: #fff;
+  border: 1px solid #e8e8e4;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06);
+  z-index: 9998;
+  transform: scale(0.92) translateY(16px);
+  transform-origin: bottom right;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.2s ease;
+}
+
+#chat-window.open {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Header ── */
+#chat-header {
+  background: #111;
+  padding: 16px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.agent-av {
+  width: 36px;
+  height: 36px;
+  background: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.agent-info { flex: 1; }
+
+.agent-name {
+  font-family: 'Fraunces', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.agent-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  color: rgba(255,255,255,0.45);
+  margin-top: 1px;
+}
+
+.status-dot {
+  width: 6px; height: 6px;
+  background: #68d391;
+  border-radius: 50%;
+  animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+  0%,100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+#close-btn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  color: rgba(255,255,255,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+#close-btn:hover { background: rgba(255,255,255,0.18); color: #fff; }
+
+/* ── Messages ── */
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+
+#messages::-webkit-scrollbar { width: 3px; }
+#messages::-webkit-scrollbar-thumb { background: #e8e8e4; border-radius: 2px; }
+
+.msg {
+  display: flex;
+  gap: 7px;
+  animation: msgIn 0.25s ease both;
+}
+
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.msg.user { flex-direction: row-reverse; }
+
+.av {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  flex-shrink: 0;
+  margin-top: auto;
+  font-weight: 600;
+}
+
+.msg.bot .av  { background: #f0f0ec; color: #666; }
+.msg.user .av { background: #111; color: #fff; }
+
+.bubble {
+  max-width: 76%;
+  padding: 9px 13px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  word-break: break-word;
+}
+
+.msg.bot .bubble {
+  background: #f7f7f5;
+  color: #222;
+  border-bottom-left-radius: 4px;
+  border: 1px solid #efefeb;
+}
+
+.msg.user .bubble {
+  background: #111;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+  font-weight: 400;
+}
+
+/* Typing indicator */
+.typing .bubble {
+  background: #f7f7f5;
+  border: 1px solid #efefeb;
+  padding: 12px 14px;
+}
+
+.dots {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.dot {
+  width: 6px; height: 6px;
+  background: #bbb;
+  border-radius: 50%;
+  animation: bounce 1.2s ease infinite;
+}
+
+.dot:nth-child(2) { animation-delay: 0.18s; }
+.dot:nth-child(3) { animation-delay: 0.36s; }
+
+@keyframes bounce {
+  0%,60%,100% { transform: translateY(0); background: #ccc; }
+  30% { transform: translateY(-5px); background: #888; }
+}
+
+/* ── Quick replies ── */
+#quick-replies {
+  padding: 4px 14px 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.qr {
+  background: #fff;
+  border: 1px solid #e0e0dc;
+  color: #333;
+  padding: 6px 12px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-family: 'Outfit', sans-serif;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.qr:hover {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+/* ── Input area ── */
+#input-area {
+  padding: 10px 12px 14px;
+  display: flex;
+  gap: 8px;
+  border-top: 1px solid #f0f0ec;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+#chat-input {
+  flex: 1;
+  background: #f7f7f5;
+  border: 1px solid #e8e8e4;
+  border-radius: 10px;
+  padding: 9px 13px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #222;
+  outline: none;
+  resize: none;
+  transition: border-color 0.15s;
+  line-height: 1.4;
+}
+
+#chat-input::placeholder { color: #bbb; }
+#chat-input:focus { border-color: #bbb; }
+
+#send-btn {
+  width: 36px; height: 36px;
+  background: #111;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: flex-end;
+  transition: background 0.15s, transform 0.15s;
+}
+
+#send-btn:hover { background: #333; transform: translateY(-1px); }
+#send-btn:active { transform: translateY(0); }
+#send-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+/* Powered by */
+.powered {
+  text-align: center;
+  font-size: 10px;
+  color: #ccc;
+  padding: 6px 0 10px;
+  flex-shrink: 0;
+}
+
+/* ── Mobile ── */
+@media (max-width: 420px) {
+  #chat-window {
+    width: calc(100vw - 20px);
+    right: 10px;
+    bottom: 84px;
+    max-height: 70vh;
+  }
+  #chat-bubble { right: 16px; bottom: 16px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- Demo page background -->
+<div style="padding: 40px; max-width: 700px; margin: 0 auto;">
+  <p style="font-family: 'Outfit', sans-serif; font-size: 13px; color: #aaa; background: #fff; border: 1px solid #e8e8e4; border-radius: 12px; padding: 12px 16px; display: inline-block; margin-bottom: 32px;">
+    🚗 Demo — chatbot-painike oikeassa alakulmassa
+  </p>
+  <h1 style="font-family: 'Fraunces', serif; font-size: 42px; font-weight: 700; color: #111; line-height: 1.1; margin-bottom: 12px;">Salon <em style="font-style: italic; color: #aaa;">Autoliike</em></h1>
+  <p style="font-family: 'Outfit', sans-serif; color: #aaa; font-size: 15px;">Laadukkaat käytetyt autot Salosta</p>
+</div>
+
+<!-- ══ CHAT BUBBLE ══ -->
+<button id="chat-bubble" onclick="toggleChat()" aria-label="Avaa chat">
+  <div id="notif">1</div>
+  <!-- Chat icon -->
+  <svg class="icon-chat" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+  <!-- Close icon -->
+  <svg class="icon-close" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+    <line x1="18" y1="6" x2="6" y2="18"/>
+    <line x1="6" y1="6" x2="18" y2="18"/>
+  </svg>
+</button>
+
+<!-- ══ CHAT WINDOW ══ -->
+<div id="chat-window" role="dialog" aria-label="Asiakaspalveluchat">
+
+  <div id="chat-header">
+    <div class="agent-av">🚗</div>
+    <div class="agent-info">
+      <div class="agent-name" id="dealerName">Salon Autoliike</div>
+      <div class="agent-status">
+        <div class="status-dot"></div>
+        Verkossa nyt
+      </div>
+    </div>
+    <button id="close-btn" onclick="toggleChat()" aria-label="Sulje">✕</button>
+  </div>
+
+  <div id="messages"></div>
+
+  <div id="quick-replies"></div>
+
+  <div id="input-area">
+    <textarea
+      id="chat-input"
+      rows="1"
+      placeholder="Kirjoita viesti..."
+      onkeydown="handleKey(event)"
+      oninput="autoResize(this)"
+    ></textarea>
+    <button id="send-btn" onclick="sendMessage()" aria-label="Lähetä">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"/>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="powered">Powered by <span style="color:#111; font-weight:600;">Autoassistentti</span></div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DEALER CONFIGURATION — edit these values
+═══════════════════════════════════════════ */
+var CONFIG = {
+  dealerName:    'Salon Autoliike',
+  dealerCity:    'Salo',
+  dealerPhone:   '040 123 4567',
+  dealerEmail:   'info@salonautoliike.fi',
+  dealerHours:   'Ma–Pe 9–18, La 10–15',
+  dealerAddress: 'Esimerkkikatu 1, Salo',
+  contactUrl:    'https://salonautoliike.fi/yhteystiedot',
+  apiKey:        'YOUR_API_KEY_HERE'  // ← paste Claude API key here when ready
+};
+
+/* ═══════════════════════════════════════════
+   SYSTEM PROMPT — Claude's personality
+═══════════════════════════════════════════ */
+var SYSTEM_PROMPT = `Olet ${CONFIG.dealerName}:n asiakaspalveluassistentti. Olet ystävällinen, asiantunteva ja lyhytsanainen. Vastaat aina suomeksi.
+
+Tietosi autoliikkeestä:
+- Nimi: ${CONFIG.dealerName}
+- Sijainti: ${CONFIG.dealerAddress}
+- Puhelin: ${CONFIG.dealerPhone}
+- Sähköposti: ${CONFIG.dealerEmail}
+- Aukioloajat: ${CONFIG.dealerHours}
+
+Tehtäväsi:
+- Vastaa asiakkaiden kysymyksiin autoliikkeestä, autoista ja rahoituksesta
+- Auta asiakkaita varaamaan koeajo
+- Ohjaa asiakkaat ottamaan yhteyttä puhelimitse tai sähköpostilla monimutkaisissa asioissa
+- Pidä viestit lyhyinä (max 3 lausetta)
+- Älä keksi varastossa olevia autoja — sano että tarkistat saatavuuden
+
+Jos asiakas haluaa varata koeajon, pyydä: nimi, puhelinnumero, haluamansa auto ja toivottu aika.`;
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+var isOpen     = false;
+var isTyping   = false;
+var history    = [];
+var greeted    = false;
+
+/* ═══════════════════════════════════════════
+   TOGGLE CHAT
+═══════════════════════════════════════════ */
+function toggleChat() {
+  isOpen = !isOpen;
+  var win = document.getElementById('chat-window');
+  var btn = document.getElementById('chat-bubble');
+  var notif = document.getElementById('notif');
+
+  win.classList.toggle('open', isOpen);
+  btn.classList.toggle('open', isOpen);
+
+  if (isOpen) {
+    notif.style.display = 'none';
+    if (!greeted) {
+      greeted = true;
+      setTimeout(function() {
+        addMessage('bot', 'Hei! 👋 Tervetuloa ' + CONFIG.dealerName + ':een. Miten voin auttaa?');
+        showQuickReplies([
+          'Näytä autot',
+          'Varaa koeajo',
+          'Rahoitusvaihtoehdot',
+          'Aukioloajat'
+        ]);
+      }, 400);
+    }
+    setTimeout(function() {
+      document.getElementById('chat-input').focus();
+    }, 350);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   MESSAGES
+═══════════════════════════════════════════ */
+function addMessage(role, text) {
+  var msgs = document.getElementById('messages');
+  var div  = document.createElement('div');
+  div.className = 'msg ' + role;
+
+  var av  = document.createElement('div');
+  av.className = 'av';
+  av.textContent = role === 'bot' ? '🚗' : 'S';
+
+  var bub = document.createElement('div');
+  bub.className = 'bubble';
+  bub.textContent = text;
+
+  div.appendChild(av);
+  div.appendChild(bub);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  return div;
+}
+
+function showTyping() {
+  var msgs = document.getElementById('messages');
+  var div  = document.createElement('div');
+  div.className = 'msg bot typing';
+  div.id = 'typing-indicator';
+
+  var av  = document.createElement('div');
+  av.className = 'av';
+  av.textContent = '🚗';
+
+  var bub = document.createElement('div');
+  bub.className = 'bubble';
+  bub.innerHTML = '<div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+
+  div.appendChild(av);
+  div.appendChild(bub);
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function removeTyping() {
+  var el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+function showQuickReplies(options) {
+  var qr = document.getElementById('quick-replies');
+  qr.innerHTML = '';
+  options.forEach(function(opt) {
+    var btn = document.createElement('button');
+    btn.className = 'qr';
+    btn.textContent = opt;
+    btn.onclick = function() {
+      qr.innerHTML = '';
+      sendText(opt);
+    };
+    qr.appendChild(btn);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   SEND MESSAGE
+═══════════════════════════════════════════ */
+function sendMessage() {
+  var input = document.getElementById('chat-input');
+  var text  = input.value.trim();
+  if (!text || isTyping) return;
+  input.value = '';
+  input.style.height = '';
+  sendText(text);
+}
+
+function sendText(text) {
+  document.getElementById('quick-replies').innerHTML = '';
+  addMessage('user', text);
+  history.push({ role: 'user', content: text });
+  getReply();
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = '';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+/* ═══════════════════════════════════════════
+   CLAUDE API CALL
+═══════════════════════════════════════════ */
+function getReply() {
+  if (CONFIG.apiKey === 'YOUR_API_KEY_HERE') {
+    // Demo mode — smart canned responses without API
+    demoReply();
+    return;
+  }
+
+  isTyping = true;
+  document.getElementById('send-btn').disabled = true;
+  showTyping();
+
+  fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': CONFIG.apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 300,
+      system: SYSTEM_PROMPT,
+      messages: history
+    })
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    removeTyping();
+    isTyping = false;
+    document.getElementById('send-btn').disabled = false;
+
+    var reply = data.content && data.content[0] && data.content[0].text
+      ? data.content[0].text
+      : 'Pahoittelen, jokin meni pieleen. Soita meille: ' + CONFIG.dealerPhone;
+
+    history.push({ role: 'assistant', content: reply });
+    addMessage('bot', reply);
+
+    // Offer quick replies after certain topics
+    var lower = reply.toLowerCase();
+    if (lower.includes('koeajo') || lower.includes('varaa')) {
+      showQuickReplies(['Varaan koeajon', 'Katson ensin autot']);
+    } else if (lower.includes('rahoitus') || lower.includes('laina')) {
+      showQuickReplies(['Kerro lisää', 'Ota yhteyttä']);
+    }
+  })
+  .catch(function() {
+    removeTyping();
+    isTyping = false;
+    document.getElementById('send-btn').disabled = false;
+    addMessage('bot', 'Tekninen ongelma. Soita meille: ' + CONFIG.dealerPhone);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   DEMO MODE (no API key needed for pitching)
+═══════════════════════════════════════════ */
+function demoReply() {
+  showTyping();
+  var last = history[history.length - 1].content.toLowerCase();
+
+  setTimeout(function() {
+    removeTyping();
+    isTyping = false;
+    document.getElementById('send-btn').disabled = false;
+
+    var reply = '';
+    var qrs   = [];
+
+    if (last.includes('auto') || last.includes('näytä') || last.includes('valikoi')) {
+      reply = 'Meillä on tällä hetkellä yli 30 autoa valikoimassa. Suosituimmat merkit: Toyota, Volkswagen ja Volvo. Haluatko suodattaa jonkin tietyn merkin tai hintaluokan mukaan?';
+      qrs = ['Toyota', 'Volkswagen', 'Alle 15 000 €'];
+    } else if (last.includes('koeajo') || last.includes('varaa')) {
+      reply = 'Koeajon voi varata arkisin 9–18 ja lauantaisin 10–15. Mikä auto kiinnostaa, ja milloin sopisi?';
+      qrs = ['Tänään', 'Huomenna', 'Ensi viikolla'];
+    } else if (last.includes('rahoitus') || last.includes('laina') || last.includes('maksu')) {
+      reply = 'Tarjoamme joustavan rahoituksen 12–84 kuukauden laina-ajalla. Käsiraha jo 0 eurosta. Haluatko laskea kuukausierän jollekin tietylle autolle?';
+      qrs = ['Laske kuukausierä', 'Ota yhteyttä'];
+    } else if (last.includes('aukiolo') || last.includes('auki') || last.includes('aika')) {
+      reply = 'Olemme avoinna ' + CONFIG.dealerHours + '. Löydät meidät osoitteesta ' + CONFIG.dealerAddress + '.';
+      qrs = ['Varaa koeajo', 'Soita meille'];
+    } else if (last.includes('hinta') || last.includes('€') || last.includes('euro')) {
+      reply = 'Autojen hinnat lähtevät 4 900 eurosta. Rahoituksella saat auton jo noin 99 €/kk. Mikä budjetti sinulla on mielessä?';
+      qrs = ['Alle 10 000 €', '10 000–20 000 €', 'Yli 20 000 €'];
+    } else if (last.includes('soita') || last.includes('puhelin')) {
+      reply = 'Tavoitat meidät numerosta ' + CONFIG.dealerPhone + '. Avoinna ' + CONFIG.dealerHours + '.';
+    } else {
+      reply = 'Kiitos viestistäsi! Autan mielelläni. Voit myös soittaa meille ' + CONFIG.dealerPhone + ' tai käydä liikkeessä ' + CONFIG.dealerAddress + '.';
+      qrs = ['Näytä autot', 'Varaa koeajo', 'Rahoitusvaihtoehdot'];
+    }
+
+    history.push({ role: 'assistant', content: reply });
+    addMessage('bot', reply);
+    if (qrs.length) showQuickReplies(qrs);
+
+  }, 800 + Math.random() * 600);
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+document.getElementById('dealerName').textContent = CONFIG.dealerName;
+</script>
+</body>
+</html>

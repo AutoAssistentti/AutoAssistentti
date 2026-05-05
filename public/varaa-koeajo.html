@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Varaa koeajo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #f7f7f5;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+/* ── Widget ── */
+.widget {
+  width: 100%;
+  max-width: 480px;
+  background: #fff;
+  border: 1px solid #e8e8e4;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes rise {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── Header ── */
+.header {
+  background: #111;
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.header-left {}
+
+.header-tag {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 4px;
+}
+
+.header-title {
+  font-family: 'Fraunces', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.header-title em {
+  font-style: italic;
+  color: rgba(255,255,255,0.5);
+}
+
+.step-indicator {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.step-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  transition: background 0.3s, transform 0.3s;
+}
+
+.step-dot.active {
+  background: #fff;
+  transform: scale(1.2);
+}
+
+.step-dot.done {
+  background: rgba(255,255,255,0.5);
+}
+
+/* ── Steps container ── */
+.steps { position: relative; }
+
+.step {
+  display: none;
+  animation: stepIn 0.3s ease both;
+}
+
+.step.active { display: block; }
+
+@keyframes stepIn {
+  from { opacity:0; transform:translateX(12px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* ── Step 1: Calendar ── */
+.calendar-section { padding: 24px 28px; }
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.month-label {
+  font-family: 'Fraunces', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #111;
+}
+
+.nav-btn {
+  background: #f7f7f5;
+  border: 1px solid #e8e8e4;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+
+.nav-btn:hover { background: #111; color: #fff; border-color: #111; }
+
+/* Day grid */
+.day-names {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 8px;
+}
+
+.day-name {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #bbb;
+  padding: 4px 0;
+}
+
+.day-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.day-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.15s;
+  border: 1px solid transparent;
+  position: relative;
+}
+
+.day-cell:hover:not(.empty):not(.past):not(.no-slots) {
+  background: #f0f0ec;
+  border-color: #e0e0dc;
+}
+
+.day-cell.today {
+  border-color: #111;
+  color: #111;
+  font-weight: 700;
+}
+
+.day-cell.selected {
+  background: #111 !important;
+  color: #fff !important;
+  border-color: #111 !important;
+}
+
+.day-cell.past {
+  color: #ddd;
+  cursor: default;
+}
+
+.day-cell.empty { cursor: default; }
+
+.day-cell.no-slots {
+  color: #ddd;
+  cursor: default;
+  text-decoration: line-through;
+}
+
+.day-cell.has-slots::after {
+  content: '';
+  position: absolute;
+  bottom: 3px;
+  left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px;
+  background: #111;
+  border-radius: 50%;
+}
+
+.day-cell.selected::after { background: #fff; }
+
+/* ── Time slots ── */
+.slots-section {
+  padding: 0 28px 24px;
+  border-top: 1px solid #f0f0ec;
+}
+
+.slots-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #bbb;
+  padding: 16px 0 12px;
+}
+
+.slots-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.slot-btn {
+  background: #f7f7f5;
+  border: 1px solid #e8e8e4;
+  border-radius: 8px;
+  padding: 8px 4px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.slot-btn:hover {
+  background: #f0f0ec;
+  border-color: #ccc;
+}
+
+.slot-btn.selected {
+  background: #111;
+  border-color: #111;
+  color: #fff;
+}
+
+.no-date-msg {
+  font-size: 13px;
+  color: #bbb;
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* ── Step 2: Details form ── */
+.form-section { padding: 24px 28px; }
+
+.form-summary {
+  background: #f7f7f5;
+  border: 1px solid #e8e8e4;
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.summary-icon { font-size: 20px; }
+
+.summary-text {}
+
+.summary-date {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111;
+}
+
+.summary-change {
+  font-size: 11px;
+  color: #aaa;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 1px;
+}
+
+.summary-change:hover { color: #111; }
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #aaa;
+  margin-bottom: 6px;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  background: #f7f7f5;
+  border: 1px solid #e8e8e4;
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  color: #222;
+  outline: none;
+  transition: border-color 0.15s;
+  appearance: none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus { border-color: #bbb; }
+
+.field textarea { resize: none; height: 64px; }
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* ── Step 3: Confirmation ── */
+.confirm-section {
+  padding: 32px 28px;
+  text-align: center;
+}
+
+.confirm-icon {
+  width: 64px; height: 64px;
+  background: #111;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  font-size: 28px;
+  animation: checkPop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+
+@keyframes checkPop {
+  from { transform: scale(0); }
+  to   { transform: scale(1); }
+}
+
+.confirm-title {
+  font-family: 'Fraunces', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 8px;
+}
+
+.confirm-sub {
+  font-size: 13px;
+  color: #aaa;
+  line-height: 1.6;
+  margin-bottom: 24px;
+}
+
+.confirm-details {
+  background: #f7f7f5;
+  border: 1px solid #e8e8e4;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #efefeb;
+  font-size: 13px;
+}
+
+.confirm-row:last-child { border-bottom: none; }
+.confirm-row .cr-label { color: #aaa; }
+.confirm-row .cr-value { font-weight: 600; color: #111; }
+
+/* ── Footer buttons ── */
+.footer {
+  padding: 16px 28px 24px;
+  border-top: 1px solid #f0f0ec;
+  display: flex;
+  gap: 10px;
+}
+
+.btn-back {
+  background: #f7f7f5;
+  border: 1px solid #e8e8e4;
+  border-radius: 11px;
+  padding: 12px 18px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.btn-back:hover { background: #eee; }
+
+.btn-next {
+  flex: 1;
+  background: #111;
+  border: none;
+  border-radius: 11px;
+  padding: 12px 18px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s, box-shadow 0.15s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.btn-next:hover {
+  background: #222;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.14);
+}
+
+.btn-next:active { transform: translateY(0); }
+.btn-next:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
+
+/* Mobile */
+@media (max-width: 500px) {
+  body { padding: 12px; }
+  .widget { border-radius: 16px; }
+  .calendar-section,
+  .slots-section,
+  .form-section,
+  .confirm-section,
+  .footer { padding-left: 18px; padding-right: 18px; }
+  .slots-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+</style>
+</head>
+<body>
+
+<div class="widget">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-tag">Koeajo</div>
+      <div class="header-title">Varaa <em>aika</em></div>
+    </div>
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot" id="dot-2"></div>
+      <div class="step-dot" id="dot-3"></div>
+    </div>
+  </div>
+
+  <!-- ═══ STEP 1: Date & Time ═══ -->
+  <div class="step active" id="step-1">
+
+    <div class="calendar-section">
+      <div class="month-nav">
+        <button class="nav-btn" onclick="prevMonth()">&#8249;</button>
+        <div class="month-label" id="monthLabel"></div>
+        <button class="nav-btn" onclick="nextMonth()">&#8250;</button>
+      </div>
+      <div class="day-names">
+        <div class="day-name">Ma</div>
+        <div class="day-name">Ti</div>
+        <div class="day-name">Ke</div>
+        <div class="day-name">To</div>
+        <div class="day-name">Pe</div>
+        <div class="day-name">La</div>
+        <div class="day-name">Su</div>
+      </div>
+      <div class="day-grid" id="dayGrid"></div>
+    </div>
+
+    <div class="slots-section">
+      <div class="slots-label" id="slotsLabel">Valitse ensin päivä</div>
+      <div id="slotsContainer">
+        <p class="no-date-msg">← Valitse päivä kalenterista</p>
+      </div>
+    </div>
+
+    <div class="footer">
+      <button class="btn-next" id="btn-to-step2" onclick="goToStep(2)" disabled>
+        Jatka tietoihin →
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ═══ STEP 2: Customer Details ═══ -->
+  <div class="step" id="step-2">
+
+    <div class="form-section">
+
+      <div class="form-summary">
+        <div class="summary-icon">📅</div>
+        <div class="summary-text">
+          <div class="summary-date" id="summaryDate">—</div>
+          <div class="summary-change" onclick="goToStep(1)">Vaihda aika</div>
+        </div>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>Etunimi</label>
+          <input type="text" id="firstName" placeholder="Matti">
+        </div>
+        <div class="field">
+          <label>Sukunimi</label>
+          <input type="text" id="lastName" placeholder="Virtanen">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Puhelinnumero</label>
+        <input type="tel" id="phone" placeholder="040 123 4567">
+      </div>
+
+      <div class="field">
+        <label>Sähköposti</label>
+        <input type="email" id="email" placeholder="matti@email.fi">
+      </div>
+
+      <div class="field">
+        <label>Kiinnostunut autosta</label>
+        <input type="text" id="carInterest" placeholder="esim. Toyota Corolla 2021" id="carField">
+      </div>
+
+      <div class="field">
+        <label>Lisätietoja (valinnainen)</label>
+        <textarea id="notes" placeholder="Muuta huomioitavaa..."></textarea>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      <button class="btn-back" onclick="goToStep(1)">← Takaisin</button>
+      <button class="btn-next" onclick="submitBooking()">Vahvista varaus →</button>
+    </div>
+
+  </div>
+
+  <!-- ═══ STEP 3: Confirmation ═══ -->
+  <div class="step" id="step-3">
+
+    <div class="confirm-section">
+      <div class="confirm-icon">✓</div>
+      <div class="confirm-title">Varaus tehty!</div>
+      <div class="confirm-sub">
+        Lähetämme vahvistuksen sähköpostiisi.<br>
+        Nähdään pian!
+      </div>
+
+      <div class="confirm-details">
+        <div class="confirm-row">
+          <span class="cr-label">Aika</span>
+          <span class="cr-value" id="confirmDate">—</span>
+        </div>
+        <div class="confirm-row">
+          <span class="cr-label">Nimi</span>
+          <span class="cr-value" id="confirmName">—</span>
+        </div>
+        <div class="confirm-row">
+          <span class="cr-label">Puhelin</span>
+          <span class="cr-value" id="confirmPhone">—</span>
+        </div>
+        <div class="confirm-row">
+          <span class="cr-label">Auto</span>
+          <span class="cr-value" id="confirmCar">—</span>
+        </div>
+      </div>
+
+      <button class="btn-next" onclick="resetBooking()" style="max-width:200px; margin:0 auto; display:block;">
+        Tee uusi varaus
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+/* ═══════════════════════════════════════
+   CONFIG — edit per dealership
+═══════════════════════════════════════ */
+var CONFIG = {
+  dealerName: 'Salon Autoliike',
+  // Available time slots on each weekday
+  weekdaySlots: ['9:00','10:00','11:00','13:00','14:00','15:00','16:00','17:00'],
+  saturdaySlots: ['10:00','11:00','12:00','13:00','14:00'],
+  sundaySlots: [],
+  // Days fully closed (0=Sun,1=Mon...6=Sat) — empty array = all days open per slots above
+  closedDays: [0], // Sunday closed
+  // Webhook URL to receive bookings (email/Zapier/Make.com) — optional
+  webhookUrl: ''
+};
+
+/* ═══════════════════════════════════════
+   STATE
+═══════════════════════════════════════ */
+var today      = new Date();
+today.setHours(0,0,0,0);
+var viewYear   = today.getFullYear();
+var viewMonth  = today.getMonth();
+var selDate    = null;
+var selTime    = null;
+var currentStep = 1;
+
+var MONTHS_FI = ['Tammikuu','Helmikuu','Maaliskuu','Huhtikuu','Toukokuu','Kesäkuu',
+                 'Heinäkuu','Elokuu','Syyskuu','Lokakuu','Marraskuu','Joulukuu'];
+
+/* ═══════════════════════════════════════
+   CALENDAR
+═══════════════════════════════════════ */
+function buildCalendar() {
+  document.getElementById('monthLabel').textContent =
+    MONTHS_FI[viewMonth] + ' ' + viewYear;
+
+  var grid  = document.getElementById('dayGrid');
+  grid.innerHTML = '';
+
+  var first = new Date(viewYear, viewMonth, 1);
+  var last  = new Date(viewYear, viewMonth + 1, 0);
+
+  // Mon=0 offset
+  var startDay = (first.getDay() + 6) % 7;
+
+  // Empty cells
+  for (var i = 0; i < startDay; i++) {
+    var empty = document.createElement('div');
+    empty.className = 'day-cell empty';
+    grid.appendChild(empty);
+  }
+
+  for (var d = 1; d <= last.getDate(); d++) {
+    var date = new Date(viewYear, viewMonth, d);
+    var cell = document.createElement('div');
+    cell.className = 'day-cell';
+    cell.textContent = d;
+
+    var isPast   = date < today;
+    var dayOfWeek = date.getDay();
+    var slots    = getSlotsForDay(dayOfWeek);
+    var hasSlots = slots.length > 0 && !isPast;
+
+    if (isPast) {
+      cell.classList.add('past');
+    } else if (!hasSlots) {
+      cell.classList.add('no-slots');
+    } else {
+      cell.classList.add('has-slots');
+      (function(d2, date2) {
+        cell.addEventListener('click', function() { selectDate(d2, date2); });
+      })(d, date);
+    }
+
+    // Today
+    if (date.toDateString() === today.toDateString()) cell.classList.add('today');
+
+    // Selected
+    if (selDate && date.toDateString() === selDate.toDateString()) {
+      cell.classList.add('selected');
+    }
+
+    grid.appendChild(cell);
+  }
+}
+
+function getSlotsForDay(dayOfWeek) {
+  if (CONFIG.closedDays.indexOf(dayOfWeek) !== -1) return [];
+  if (dayOfWeek === 0) return CONFIG.sundaySlots;
+  if (dayOfWeek === 6) return CONFIG.saturdaySlots;
+  return CONFIG.weekdaySlots;
+}
+
+function selectDate(d, date) {
+  selDate = date;
+  selTime = null;
+  buildCalendar();
+  renderSlots();
+  document.getElementById('btn-to-step2').disabled = true;
+}
+
+function renderSlots() {
+  var container = document.getElementById('slotsContainer');
+  var label     = document.getElementById('slotsLabel');
+
+  if (!selDate) {
+    label.textContent = 'Valitse ensin päivä';
+    container.innerHTML = '<p class="no-date-msg">← Valitse päivä kalenterista</p>';
+    return;
+  }
+
+  var dateStr = selDate.getDate() + '.' + (selDate.getMonth()+1) + '.' + selDate.getFullYear();
+  label.textContent = 'Vapaat ajat — ' + dateStr;
+
+  var slots = getSlotsForDay(selDate.getDay());
+  var grid  = document.createElement('div');
+  grid.className = 'slots-grid';
+
+  slots.forEach(function(time) {
+    var btn = document.createElement('button');
+    btn.className = 'slot-btn' + (selTime === time ? ' selected' : '');
+    btn.textContent = time;
+    btn.onclick = function() {
+      selTime = time;
+      renderSlots();
+      document.getElementById('btn-to-step2').disabled = false;
+    };
+    grid.appendChild(btn);
+  });
+
+  container.innerHTML = '';
+  container.appendChild(grid);
+}
+
+function prevMonth() {
+  viewMonth--;
+  if (viewMonth < 0) { viewMonth = 11; viewYear--; }
+  buildCalendar();
+}
+
+function nextMonth() {
+  viewMonth++;
+  if (viewMonth > 11) { viewMonth = 0; viewYear++; }
+  buildCalendar();
+}
+
+/* ═══════════════════════════════════════
+   STEPS
+═══════════════════════════════════════ */
+function goToStep(n) {
+  document.getElementById('step-' + currentStep).classList.remove('active');
+  document.getElementById('step-' + n).classList.add('active');
+
+  // Update dots
+  for (var i = 1; i <= 3; i++) {
+    var dot = document.getElementById('dot-' + i);
+    dot.classList.remove('active','done');
+    if (i === n) dot.classList.add('active');
+    else if (i < n) dot.classList.add('done');
+  }
+
+  currentStep = n;
+
+  // Populate summary
+  if (n === 2) {
+    var dateStr = selDate.getDate() + '.' + (selDate.getMonth()+1) + '.' +
+                  selDate.getFullYear() + ' klo ' + selTime;
+    document.getElementById('summaryDate').textContent = dateStr;
+  }
+}
+
+/* ═══════════════════════════════════════
+   SUBMIT
+═══════════════════════════════════════ */
+function submitBooking() {
+  var first = document.getElementById('firstName').value.trim();
+  var last  = document.getElementById('lastName').value.trim();
+  var phone = document.getElementById('phone').value.trim();
+  var email = document.getElementById('email').value.trim();
+  var car   = document.getElementById('carInterest').value.trim();
+
+  if (!first || !last || !phone || !email) {
+    alert('Täytä kaikki pakolliset kentät.');
+    return;
+  }
+
+  var dateStr = selDate.getDate() + '.' + (selDate.getMonth()+1) + '.' +
+                selDate.getFullYear() + ' klo ' + selTime;
+
+  // Show confirmation
+  document.getElementById('confirmDate').textContent  = dateStr;
+  document.getElementById('confirmName').textContent  = first + ' ' + last;
+  document.getElementById('confirmPhone').textContent = phone;
+  document.getElementById('confirmCar').textContent   = car || 'Ei määritelty';
+
+  goToStep(3);
+
+  // Send to webhook if configured
+  if (CONFIG.webhookUrl) {
+    fetch(CONFIG.webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        dealer:    CONFIG.dealerName,
+        date:      dateStr,
+        firstName: first,
+        lastName:  last,
+        phone:     phone,
+        email:     email,
+        car:       car,
+        notes:     document.getElementById('notes').value
+      })
+    }).catch(function() {});
+  }
+}
+
+function resetBooking() {
+  selDate = null;
+  selTime = null;
+  ['firstName','lastName','phone','email','carInterest','notes'].forEach(function(id) {
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('btn-to-step2').disabled = true;
+  buildCalendar();
+  renderSlots();
+  goToStep(1);
+}
+
+/* ═══════════════════════════════════════
+   INIT
+═══════════════════════════════════════ */
+buildCalendar();
+renderSlots();
+</script>
+</body>
+</html>
