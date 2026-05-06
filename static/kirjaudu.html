@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kirjaudu — Ilmoitusgeneraattori</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: #f7f7f5;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border: 1px solid #e8e8e4;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  animation: rise 0.5s cubic-bezier(0.22,1,0.36,1) both;
+}
+
+@keyframes rise {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+.card-header {
+  background: #111;
+  padding: 28px;
+  text-align: center;
+}
+
+.lock-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.header-title {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.header-sub {
+  font-size: 12px;
+  color: rgba(255,255,255,0.4);
+}
+
+.card-body {
+  padding: 28px;
+}
+
+.field {
+  margin-bottom: 16px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: #aaa;
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  background: #f7f7f5;
+  border: 1px solid #e8e8e4;
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  color: #222;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.field input:focus { border-color: #999; background: #fff; }
+
+.error-msg {
+  background: #fff5f5;
+  border: 1px solid #fed7d7;
+  border-radius: 9px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #c53030;
+  margin-bottom: 14px;
+  display: none;
+  align-items: center;
+  gap: 6px;
+}
+
+.error-msg.visible { display: flex; }
+
+.login-btn {
+  width: 100%;
+  background: #111;
+  border: none;
+  border-radius: 11px;
+  padding: 13px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.15s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.login-btn:hover { background: #333; transform: translateY(-1px); }
+.login-btn:active { transform: translateY(0); }
+
+.card-footer {
+  padding: 14px 28px 20px;
+  text-align: center;
+  font-size: 11px;
+  color: #ccc;
+  border-top: 1px solid #f0f0ec;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <div class="lock-icon">🔒</div>
+    <div class="header-title">Ilmoitusgeneraattori</div>
+    <div class="header-sub">Kirjaudu jatkaaksesi</div>
+  </div>
+
+  <div class="card-body">
+    <div class="field">
+      <label>Autoliike</label>
+      <input type="text" id="dealerName" placeholder="esim. Salon Autoliike" autocomplete="username">
+    </div>
+
+    <div class="field">
+      <label>Salasana</label>
+      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter') login()">
+    </div>
+
+    <div class="error-msg" id="errorMsg">
+      ❌ Väärä salasana. Yritä uudelleen.
+    </div>
+
+    <button class="login-btn" onclick="login()">Kirjaudu sisään →</button>
+  </div>
+
+  <div class="card-footer">
+    Unohditko salasanasi? Ota yhteyttä ylläpitoon.
+  </div>
+</div>
+
+<script>
+/*
+  ═══════════════════════════════════════════════
+  PASSWORDS — edit this list to add/remove dealers
+  
+  Format:
+  'dealerkey': 'password'
+  
+  The dealer name field is case-insensitive and
+  spaces are ignored, so "Salon Autoliike" matches
+  "salonautoliike", "SALON AUTOLIIKE" etc.
+  ═══════════════════════════════════════════════
+*/
+var PASSWORDS = {
+  // Admin — full access
+  'admin':           'admin20',
+
+  // Dealers — add one per client
+  'salonautoliike':  'salo2024',
+  'turkuauto':       'turku2024',
+  'helsinkiauto':    'hki2024',
+
+  // Add more dealers like this:
+  // 'liikkeennimi': 'salasana',
+};
+
+var SESSION_KEY = 'autoassistentti_auth';
+
+// If already logged in, redirect straight to generator
+if (sessionStorage.getItem(SESSION_KEY) === 'true') {
+  window.location.href = 'ilmoitusgeneraattori.html';
+}
+
+function login() {
+  var name = document.getElementById('dealerName').value.trim()
+    .toLowerCase().replace(/\s+/g, '');
+  var pass = document.getElementById('password').value.trim();
+  var err  = document.getElementById('errorMsg');
+
+  // Check admin first
+  if (pass === PASSWORDS['admin']) {
+    sessionStorage.setItem(SESSION_KEY, 'true');
+    sessionStorage.setItem(SESSION_KEY + '_dealer', 'Admin');
+    window.location.href = 'ilmoitusgeneraattori.html';
+    return;
+  }
+
+  // Check dealer password
+  if (name && PASSWORDS[name] && PASSWORDS[name] === pass) {
+    sessionStorage.setItem(SESSION_KEY, 'true');
+    sessionStorage.setItem(SESSION_KEY + '_dealer',
+      document.getElementById('dealerName').value.trim());
+    window.location.href = 'ilmoitusgeneraattori.html';
+    return;
+  }
+
+  // Wrong
+  err.classList.add('visible');
+  document.getElementById('password').value = '';
+  document.getElementById('password').focus();
+
+  setTimeout(function() { err.classList.remove('visible'); }, 3000);
+}
+</script>
+</body>
+</html>

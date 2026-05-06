@@ -338,6 +338,12 @@ function setLoading(on) {
 }
 
 buildExtras();
+// Auth check — redirect to login if not authenticated
+var SESSION_KEY = 'autoassistentti_auth';
+if (sessionStorage.getItem(SESSION_KEY) !== 'true') {
+  window.location.href = 'kirjaudu.html';
+}
+// Show which dealer is logged in
+var dealerName = sessionStorage.getItem(SESSION_KEY + '_dealer') || '';
 </script>
 </body>
-</html>
