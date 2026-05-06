@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Autoassistentti</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Outfit', sans-serif; background: #f7f7f5; min-height: 100vh; }
+
+/* Nav */
+.nav {
+  background: #111;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-logo { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: #fff; }
+.nav-logo em { font-style: italic; color: rgba(255,255,255,0.4); }
+.nav-badge { font-size: 11px; background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); padding: 4px 10px; border-radius: 100px; }
+
+/* Layout */
+.page { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+
+.page-title { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; color: #111; margin-bottom: 6px; }
+.page-sub { font-size: 13px; color: #aaa; margin-bottom: 32px; }
+
+/* Dealer list */
+.dealer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 32px; }
+
+.dealer-card {
+  background: #fff;
+  border: 1px solid #e8e8e4;
+  border-radius: 14px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  position: relative;
+}
+.dealer-card:hover { border-color: #bbb; transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+.dealer-card.active { border-color: #111; box-shadow: 0 0 0 2px #111; }
+
+.dealer-name { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: #111; margin-bottom: 3px; }
+.dealer-key { font-size: 11px; color: #aaa; font-family: monospace; margin-bottom: 10px; }
+.dealer-status { display: flex; align-items: center; gap: 5px; font-size: 11px; color: #22c55e; }
+.dealer-status::before { content: ''; width: 6px; height: 6px; background: #22c55e; border-radius: 50%; }
+
+.add-dealer-btn {
+  background: #fff;
+  border: 2px dashed #e8e8e4;
+  border-radius: 14px;
+  padding: 18px 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: #aaa;
+  width: 100%;
+  text-align: left;
+}
+.add-dealer-btn:hover { border-color: #bbb; color: #555; }
+
+/* Form panel */
+.form-panel {
+  background: #fff;
+  border: 1px solid #e8e8e4;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 24px;
+  display: none;
+  animation: rise 0.3s ease both;
+}
+.form-panel.visible { display: block; }
+
+@keyframes rise { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+
+.form-header {
+  background: #111;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.form-header-title { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; color: #fff; }
+.form-close { background: rgba(255,255,255,0.1); border: none; color: #fff; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 14px; transition: background 0.15s; }
+.form-close:hover { background: rgba(255,255,255,0.2); }
+
+.form-body { padding: 24px; }
+.form-section-title { font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; color: #aaa; margin-bottom: 14px; margin-top: 20px; padding-bottom: 8px; border-bottom: 1px solid #f0f0ec; }
+.form-section-title:first-child { margin-top: 0; }
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 600px) { .field-row { grid-template-columns: 1fr; } }
+
+.field { margin-bottom: 14px; }
+.field label { display: block; font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.09em; color: #aaa; margin-bottom: 5px; }
+.field input, .field textarea, .field select {
+  width: 100%; background: #f7f7f5; border: 1px solid #e8e8e4; border-radius: 9px;
+  padding: 9px 12px; font-family: 'Outfit', sans-serif; font-size: 13px; color: #222;
+  outline: none; transition: border-color 0.15s; appearance: none;
+}
+.field input:focus, .field textarea:focus, .field select:focus { border-color: #999; background: #fff; }
+.field textarea { resize: none; height: 60px; }
+
+.field-hint { font-size: 11px; color: #bbb; margin-top: 4px; }
+
+/* Install snippet */
+.snippet-box {
+  background: #111;
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-top: 6px;
+  font-family: monospace;
+  font-size: 12px;
+  color: #a8f542;
+  word-break: break-all;
+  line-height: 1.6;
+  position: relative;
+}
+
+.copy-snippet-btn {
+  position: absolute;
+  top: 8px; right: 8px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  font-size: 11px;
+  font-family: 'Outfit', sans-serif;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.copy-snippet-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* Form actions */
+.form-actions { display: flex; gap: 10px; margin-top: 24px; padding-top: 20px; border-top: 1px solid #f0f0ec; }
+
+.btn-save {
+  flex: 1; background: #111; border: none; border-radius: 10px; padding: 12px;
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 600; color: #fff;
+  cursor: pointer; transition: background 0.15s, transform 0.15s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+.btn-save:hover { background: #333; transform: translateY(-1px); }
+
+.btn-delete {
+  background: #fff5f5; border: 1px solid #fed7d7; border-radius: 10px; padding: 12px 16px;
+  font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 500; color: #c53030;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-delete:hover { background: #fed7d7; }
+
+/* Toast */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+  background: #111; color: #fff; padding: 12px 20px; border-radius: 100px;
+  font-size: 13px; font-weight: 500; transition: transform 0.3s ease;
+  z-index: 9999; white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Admin login */
+.login-overlay {
+  position: fixed; inset: 0; background: #f7f7f5;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9998; padding: 20px;
+}
+.login-card {
+  background: #fff; border: 1px solid #e8e8e4; border-radius: 16px;
+  overflow: hidden; width: 100%; max-width: 340px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+.login-card-header { background: #111; padding: 24px; text-align: center; }
+.login-card-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; color: #fff; }
+.login-card-sub { font-size: 12px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+.login-card-body { padding: 24px; }
+.login-btn {
+  width: 100%; background: #111; border: none; border-radius: 10px; padding: 12px;
+  font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600; color: #fff;
+  cursor: pointer; margin-top: 4px;
+}
+</style>
+</head>
+<body>
+
+<!-- Admin login overlay -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-card-header">
+      <div style="font-size:28px; margin-bottom:8px;">⚙️</div>
+      <div class="login-card-title">Admin-paneeli</div>
+      <div class="login-card-sub">Autoassistentti</div>
+    </div>
+    <div class="login-card-body">
+      <div class="field">
+        <label>Admin-salasana</label>
+        <input type="password" id="adminPassInput" placeholder="••••••••"
+          onkeydown="if(event.key==='Enter') adminLogin()">
+      </div>
+      <div id="adminErr" style="font-size:12px; color:#c53030; margin-bottom:10px; display:none;">Väärä salasana</div>
+      <button class="login-btn" onclick="adminLogin()">Kirjaudu →</button>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <div class="nav-logo">Auto<em>assistentti</em></div>
+  <div class="nav-badge">Admin-paneeli</div>
+</nav>
+
+<div class="page">
+  <div class="page-title">Asiakkaat</div>
+  <div class="page-sub">Hallinnoi autoliikkeiden asetuksia ja asennusavaimia</div>
+
+  <div class="dealer-grid" id="dealerGrid"></div>
+
+  <button class="add-dealer-btn" onclick="openNewDealer()">
+    <span style="font-size:20px;">+</span>
+    Lisää uusi asiakas
+  </button>
+
+  <!-- Edit / New dealer form -->
+  <div class="form-panel" id="formPanel">
+    <div class="form-header">
+      <div class="form-header-title" id="formTitle">Uusi asiakas</div>
+      <button class="form-close" onclick="closeForm()">✕</button>
+    </div>
+    <div class="form-body">
+
+      <div class="form-section-title">Perustiedot</div>
+      <div class="field-row">
+        <div class="field">
+          <label>Autoliikkeen nimi</label>
+          <input type="text" id="f_name" placeholder="Salon Autoliike">
+        </div>
+        <div class="field">
+          <label>Avain (ei välilyöntejä)</label>
+          <input type="text" id="f_key" placeholder="salonautoliike">
+          <div class="field-hint">Käytetään URL:ssa — esim. ?dealer=salonautoliike</div>
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Puhelin</label>
+          <input type="text" id="f_phone" placeholder="040 123 4567">
+        </div>
+        <div class="field">
+          <label>Sähköposti (varauksille)</label>
+          <input type="email" id="f_email" placeholder="info@autoliike.fi">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Osoite</label>
+          <input type="text" id="f_address" placeholder="Esimerkkikatu 1, Salo">
+        </div>
+        <div class="field">
+          <label>Aukioloajat</label>
+          <input type="text" id="f_hours" placeholder="Ma–Pe 9–18, La 10–15">
+        </div>
+      </div>
+      <div class="field">
+        <label>Verkkosivusto</label>
+        <input type="text" id="f_website" placeholder="https://salonautoliike.fi">
+      </div>
+
+      <div class="form-section-title">Chatbot-asetukset</div>
+      <div class="field">
+        <label>Tervetuloviesti</label>
+        <input type="text" id="f_greeting" placeholder="Hei! Tervetuloa Salon Autoliikkeeseen. Miten voin auttaa?">
+      </div>
+      <div class="field">
+        <label>Lisätietoja chatbotille (automerkit, erikoispalvelut jne.)</label>
+        <textarea id="f_extra" placeholder="Meillä on erikoisosaamista Toyota- ja Volkswagen-merkeissä. Tarjoamme myös vaihtoautoarviointeja."></textarea>
+      </div>
+
+      <div class="form-section-title">Koeajovaraukset</div>
+      <div class="field-row">
+        <div class="field">
+          <label>EmailJS Service ID</label>
+          <input type="text" id="f_emailjs_service" placeholder="service_xxxxxxx">
+          <div class="field-hint">Rekisteröi osoitteessa emailjs.com (ilmainen)</div>
+        </div>
+        <div class="field">
+          <label>EmailJS Template ID</label>
+          <input type="text" id="f_emailjs_template" placeholder="template_xxxxxxx">
+        </div>
+      </div>
+      <div class="field">
+        <label>EmailJS Public Key</label>
+        <input type="text" id="f_emailjs_key" placeholder="xxxxxxxxxxxxxxx">
+      </div>
+
+      <div class="form-section-title">Asennuskoodi</div>
+      <div class="field">
+        <label>Kopioi tämä WordPress-sivulle (WPCode → sitewide footer)</label>
+        <div class="snippet-box" id="snippetBox">
+          — tallenna ensin —
+          <button class="copy-snippet-btn" onclick="copySnippet()">Kopioi</button>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-save" onclick="saveDealer()">💾 Tallenna</button>
+        <button class="btn-delete" id="deleteBtn" onclick="deleteDealer()" style="display:none;">Poista</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var ADMIN_PASSWORD = 'admin20'; // ← change this
+var BASE_URL = window.location.origin;
+var STORAGE_KEY = 'autoassistentti_dealers';
+var currentKey = null;
+
+/* ── Admin login ── */
+function adminLogin() {
+  var pass = document.getElementById('adminPassInput').value;
+  if (pass === ADMIN_PASSWORD) {
+    document.getElementById('loginOverlay').style.display = 'none';
+    renderDealers();
+  } else {
+    document.getElementById('adminErr').style.display = 'block';
+  }
+}
+
+/* ── Storage ── */
+function getDealers() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); }
+  catch(e) { return {}; }
+}
+
+function saveDealers(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+/* ── Render dealer cards ── */
+function renderDealers() {
+  var dealers = getDealers();
+  var grid = document.getElementById('dealerGrid');
+  grid.innerHTML = '';
+
+  Object.keys(dealers).forEach(function(key) {
+    var d = dealers[key];
+    var card = document.createElement('div');
+    card.className = 'dealer-card';
+    card.innerHTML =
+      '<div class="dealer-name">' + d.name + '</div>' +
+      '<div class="dealer-key">?dealer=' + key + '</div>' +
+      '<div class="dealer-status">Aktiivinen</div>';
+    card.onclick = function() { openEditDealer(key); };
+    grid.appendChild(card);
+  });
+}
+
+/* ── Open new dealer form ── */
+function openNewDealer() {
+  currentKey = null;
+  clearForm();
+  document.getElementById('formTitle').textContent = 'Uusi asiakas';
+  document.getElementById('deleteBtn').style.display = 'none';
+  document.getElementById('snippetBox').innerHTML = '— tallenna ensin —<button class="copy-snippet-btn" onclick="copySnippet()">Kopioi</button>';
+  document.getElementById('formPanel').classList.add('visible');
+  document.getElementById('formPanel').scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ── Open edit dealer form ── */
+function openEditDealer(key) {
+  var dealers = getDealers();
+  var d = dealers[key];
+  if (!d) return;
+  currentKey = key;
+  document.getElementById('formTitle').textContent = d.name;
+  document.getElementById('f_name').value = d.name || '';
+  document.getElementById('f_key').value = key;
+  document.getElementById('f_phone').value = d.phone || '';
+  document.getElementById('f_email').value = d.email || '';
+  document.getElementById('f_address').value = d.address || '';
+  document.getElementById('f_hours').value = d.hours || '';
+  document.getElementById('f_website').value = d.website || '';
+  document.getElementById('f_greeting').value = d.greeting || '';
+  document.getElementById('f_extra').value = d.extra || '';
+  document.getElementById('f_emailjs_service').value = d.emailjs_service || '';
+  document.getElementById('f_emailjs_template').value = d.emailjs_template || '';
+  document.getElementById('f_emailjs_key').value = d.emailjs_key || '';
+  document.getElementById('deleteBtn').style.display = 'block';
+  updateSnippet(key);
+  document.getElementById('formPanel').classList.add('visible');
+  document.getElementById('formPanel').scrollIntoView({ behavior: 'smooth' });
+}
+
+function closeForm() {
+  document.getElementById('formPanel').classList.remove('visible');
+  currentKey = null;
+}
+
+function clearForm() {
+  ['f_name','f_key','f_phone','f_email','f_address','f_hours',
+   'f_website','f_greeting','f_extra','f_emailjs_service',
+   'f_emailjs_template','f_emailjs_key'].forEach(function(id) {
+    document.getElementById(id).value = '';
+  });
+}
+
+/* ── Auto-generate key from name ── */
+document.addEventListener('DOMContentLoaded', function() {
+  document.getElementById('f_name').addEventListener('input', function() {
+    if (!currentKey) {
+      document.getElementById('f_key').value =
+        this.value.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
+    }
+  });
+});
+
+/* ── Save dealer ── */
+function saveDealer() {
+  var name = document.getElementById('f_name').value.trim();
+  var key  = document.getElementById('f_key').value.trim().toLowerCase().replace(/\s+/g,'');
+
+  if (!name || !key) { showToast('❌ Täytä nimi ja avain'); return; }
+
+  var dealers = getDealers();
+  dealers[key] = {
+    name:             name,
+    phone:            document.getElementById('f_phone').value.trim(),
+    email:            document.getElementById('f_email').value.trim(),
+    address:          document.getElementById('f_address').value.trim(),
+    hours:            document.getElementById('f_hours').value.trim(),
+    website:          document.getElementById('f_website').value.trim(),
+    greeting:         document.getElementById('f_greeting').value.trim(),
+    extra:            document.getElementById('f_extra').value.trim(),
+    emailjs_service:  document.getElementById('f_emailjs_service').value.trim(),
+    emailjs_template: document.getElementById('f_emailjs_template').value.trim(),
+    emailjs_key:      document.getElementById('f_emailjs_key').value.trim(),
+  };
+
+  saveDealers(dealers);
+  currentKey = key;
+  updateSnippet(key);
+  document.getElementById('deleteBtn').style.display = 'block';
+  renderDealers();
+  showToast('✅ Tallennettu!');
+}
+
+/* ── Delete dealer ── */
+function deleteDealer() {
+  if (!currentKey) return;
+  if (!confirm('Poistetaanko ' + currentKey + '?')) return;
+  var dealers = getDealers();
+  delete dealers[currentKey];
+  saveDealers(dealers);
+  renderDealers();
+  closeForm();
+  showToast('🗑️ Poistettu');
+}
+
+/* ── Snippet ── */
+function updateSnippet(key) {
+  var snippet = '<script src="' + BASE_URL + '/install.js?dealer=' + key + '"><\/script>';
+  document.getElementById('snippetBox').innerHTML =
+    snippet + '<button class="copy-snippet-btn" onclick="copySnippet()">Kopioi</button>';
+}
+
+function copySnippet() {
+  var box = document.getElementById('snippetBox');
+  var text = box.textContent.replace('Kopioi','').trim();
+  navigator.clipboard.writeText(text).then(function() {
+    showToast('📋 Koodi kopioitu!');
+  });
+}
+
+/* ── Toast ── */
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2500);
+}
+</script>
+</body>
+</html>
