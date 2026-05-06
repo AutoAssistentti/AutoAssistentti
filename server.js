@@ -9,7 +9,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve all HTML files as static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'static')));
 
 // ── Health check ──────────────────────────────────────
 app.get('/health', (req, res) => {
@@ -54,7 +54,7 @@ app.post('/api/chat', async (req, res) => {
 
 // ── Catch all — serve index.html ──────────────────────
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'static', 'index.html'));
 });
 
 app.listen(PORT, () => {
